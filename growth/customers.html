@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قاعدة بيانات العملاء</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+
+        .search-bar:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .add-customer-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .add-customer-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 10px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .customers-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .customers-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 15px;
+            text-align: right;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            position: relative;
+        }
+
+        .customers-table th:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sort-arrow {
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+
+        .customers-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e1e5e9;
+            text-align: right;
+        }
+
+        .customers-table tbody tr {
+            transition: background-color 0.3s ease;
+        }
+
+        .customers-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .company-name {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .contact-info {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .sales-value {
+            font-weight: 600;
+            color: #4CAF50;
+        }
+
+        .interaction-date {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            gap: 10px;
+        }
+
+        .pagination button {
+            padding: 10px 15px;
+            border: 2px solid #e1e5e9;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pagination button:hover {
+            background-color: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .pagination button.active {
+            background-color: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .stats-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .stats-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-container {
+                max-width: none;
+            }
+
+            .filters {
+                justify-content: center;
+            }
+
+            .customers-table {
+                font-size: 14px;
+            }
+
+            .customers-table th,
+            .customers-table td {
+                padding: 10px 8px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>قاعدة بيانات العملاء</h1>
+            <p>دليل مركزي وقابل للبحث لجميع العملاء المؤسسيين</p>
+        </div>
+
+        <div class="stats-card">
+            <div class="stats-number" id="totalCustomers">247</div>
+            <p>إجمالي العملاء المسجلين</p>
+        </div>
+
+        <div class="controls">
+            <div class="search-container">
+                <input type="text" class="search-bar" placeholder="البحث بالشركة أو الشخص المسؤول..." id="searchInput">
+                <span class="search-icon">🔍</span>
+            </div>
+            <button class="add-customer-btn" onclick="addNewCustomer()">
+                إضافة عميل جديد +
+            </button>
+        </div>
+
+        <div class="filters">
+            <select class="filter-select" id="salesFilter">
+                <option value="">جميع القيم</option>
+                <option value="high">قيمة عالية (أكثر من 100,000)</option>
+                <option value="medium">قيمة متوسطة (10,000 - 100,000)</option>
+                <option value="low">قيمة منخفضة (أقل من 10,000)</option>
+            </select>
+            <select class="filter-select" id="dateFilter">
+                <option value="">جميع التواريخ</option>
+                <option value="week">آخر أسبوع</option>
+                <option value="month">آخر شهر</option>
+                <option value="quarter">آخر ربع</option>
+            </select>
+        </div>
+
+        <div class="table-container">
+            <table class="customers-table">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">
+                            <span class="sort-arrow">↕</span>
+                            اسم الشركة
+                        </th>
+                        <th onclick="sortTable(1)">
+                            <span class="sort-arrow">↕</span>
+                            الشخص المسؤول
+                        </th>
+                        <th onclick="sortTable(2)">
+                            <span class="sort-arrow">↕</span>
+                            تاريخ آخر تفاعل
+                        </th>
+                        <th onclick="sortTable(3)">
+                            <span class="sort-arrow">↕</span>
+                            إجمالي قيمة المبيعات
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="customersTableBody">
+                    <tr>
+                        <td class="company-name">شركة التقنية المتقدمة</td>
+                        <td class="contact-info">أحمد محمد علي<br>ahmed@techcorp.com</td>
+                        <td class="interaction-date">2024-12-15</td>
+                        <td class="sales-value">325,000 ريال</td>
+                    </tr>
+                    <tr>
+                        <td class="company-name">مؤسسة الابتكار الرقمي</td>
+                        <td class="contact-info">فاطمة السعد<br>fatima@innovation.sa</td>
+                        <td class="interaction-date">2024-12-10</td>
+                        <td class="sales-value">180,500 ريال</td>
+                    </tr>
+                    <tr>
+                        <td class="company-name">شركة النمو التجاري</td>
+                        <td class="contact-info">محمد الأحمد<br>m.ahmed@growth.com</td>
+                        <td class="interaction-date">2024-12-08</td>
+                        <td class="sales-value">95,000 ريال</td>
+                    </tr>
+                    <tr>
+                        <td class="company-name">مجموعة الحلول الذكية</td>
+                        <td class="contact-info">سارة الخليل<br>sara@smartsolutions.sa</td>
+                        <td class="interaction-date">2024-12-05</td>
+                        <td class="sales-value">450,000 ريال</td>
+                    </tr>
+                    <tr>
+                        <td class="company-name">شركة المستقبل للتكنولوجيا</td>
+                        <td class="contact-info">خالد الرشيد<br>khaled@future-tech.com</td>
+                        <td class="interaction-date">2024-12-01</td>
+                        <td class="sales-value">275,800 ريال</td>
+                    </tr>
+                    <tr>
+                        <td class="company-name">مؤسسة الأعمال الرقمية</td>
+                        <td class="contact-info">نورا عبدالله<br>nora@digitalbiz.sa</td>
+                        <td class="interaction-date">2024-11-28</td>
+                        <td class="sales-value">125,000 ريال</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <button onclick="changePage(-1)">السابق</button>
+            <button class="active">1</button>
+            <button onclick="changePage(2)">2</button>
+            <button onclick="changePage(3)">3</button>
+            <button onclick="changePage(1)">التالي</button>
+        </div>
+    </div>
+
+    <script>
+        // البحث في الجدول
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#customersTableBody tr');
+            
+            tableRows.forEach(row => {
+                const companyName = row.cells[0].textContent.toLowerCase();
+                const contactName = row.cells[1].textContent.toLowerCase();
+                
+                if (companyName.includes(searchTerm) || contactName.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // ترتيب الجدول
+        function sortTable(columnIndex) {
+            const table = document.getElementById('customersTableBody');
+            const rows = Array.from(table.rows);
+            const isAscending = table.getAttribute('data-sort') !== 'asc';
+            
+            rows.sort((a, b) => {
+                const aText = a.cells[columnIndex].textContent.trim();
+                const bText = b.cells[columnIndex].textContent.trim();
+                
+                if (columnIndex === 3) { // عمود المبيعات
+                    const aValue = parseInt(aText.replace(/[^\d]/g, ''));
+                    const bValue = parseInt(bText.replace(/[^\d]/g, ''));
+                    return isAscending ? aValue - bValue : bValue - aValue;
+                } else if (columnIndex === 2) { // عمود التاريخ
+                    const aDate = new Date(aText);
+                    const bDate = new Date(bText);
+                    return isAscending ? aDate - bDate : bDate - aDate;
+                } else {
+                    return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
+                }
+            });
+            
+            table.setAttribute('data-sort', isAscending ? 'asc' : 'desc');
+            rows.forEach(row => table.appendChild(row));
+        }
+
+        // تغيير الصفحة
+        function changePage(page) {
+            const buttons = document.querySelectorAll('.pagination button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            if (typeof page === 'number' && page <= 3) {
+                buttons[page].classList.add('active');
+            }
+        }
+
+        // إضافة عميل جديد
+        function addNewCustomer() {
+            alert('سيتم فتح نموذج إضافة عميل جديد');
+        }
+
+        // فلترة حسب قيمة المبيعات
+        document.getElementById('salesFilter').addEventListener('change', function(e) {
+            const filterValue = e.target.value;
+            const tableRows = document.querySelectorAll('#customersTableBody tr');
+            
+            tableRows.forEach(row => {
+                const salesText = row.cells[3].textContent;
+                const salesValue = parseInt(salesText.replace(/[^\d]/g, ''));
+                
+                let show = true;
+                if (filterValue === 'high' && salesValue <= 100000) show = false;
+                else if (filterValue === 'medium' && (salesValue < 10000 || salesValue > 100000)) show = false;
+                else if (filterValue === 'low' && salesValue >= 10000) show = false;
+                
+                row.style.display = show ? '' : 'none';
+            });
+        });
+
+        // فلترة حسب التاريخ
+        document.getElementById('dateFilter').addEventListener('change', function(e) {
+            const filterValue = e.target.value;
+            const tableRows = document.querySelectorAll('#customersTableBody tr');
+            const now = new Date();
+            
+            tableRows.forEach(row => {
+                const dateText = row.cells[2].textContent;
+                const rowDate = new Date(dateText);
+                const daysDiff = (now - rowDate) / (1000 * 60 * 60 * 24);
+                
+                let show = true;
+                if (filterValue === 'week' && daysDiff > 7) show = false;
+                else if (filterValue === 'month' && daysDiff > 30) show = false;
+                else if (filterValue === 'quarter' && daysDiff > 90) show = false;
+                
+                row.style.display = show ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<style>
+    .sidebar {
+        width: 260px;
+        background: #1e293b;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        right: 0;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+        transition: right 0.3s ease;
+    }
+    .sidebar-header {
+        padding: 20px;
+        text-align: center;
+        background: #0f172a;
+    }
+    .sidebar-header .logo {
+        font-size: 1.8rem;
+        font-weight: bold;
+    }
+    .sidebar-nav {
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+    .nav-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .nav-item .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        color: #cbd5e1;
+        text-decoration: none;
+        transition: background 0.3s, color 0.3s;
+        font-size: 1.1rem;
+    }
+    .nav-item .nav-link:hover, .nav-item .nav-link.active {
+        background: #334155;
+        color: white;
+        border-right: 4px solid #667eea;
+    }
+    .nav-item .nav-link i {
+        margin-left: 15px;
+        width: 20px;
+    }
+    .nav-item.has-submenu > .nav-link::after {
+        content: '▼';
+        margin-right: auto;
+        font-size: 0.8rem;
+        transition: transform 0.3s ease;
+    }
+    .nav-item.has-submenu.open > .nav-link::after {
+        transform: rotate(180deg);
+    }
+    .submenu {
+        list-style: none;
+        padding: 0;
+        background: #273448;
+        display: none;
+    }
+    .nav-item.has-submenu.open .submenu {
+        display: block;
+    }
+    .submenu .nav-link {
+        padding-right: 45px;
+        font-size: 1rem;
+    }
+</style>
+
+<div class="sidebar">
+    <div class="sidebar-header">
+        <div class="logo">📈 منصة نمو</div>
+    </div>
+    <nav class="sidebar-nav">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="/Dashboard/index.html" class="nav-link"><i class="fas fa-tachometer-alt"></i> لوحة المعلومات</a>
+            </li>
+            <li class="nav-item has-submenu">
+                <a href="#" class="nav-link"><i class="fas fa-chart-pie"></i> ذكاء الأعمال</a>
+                <ul class="submenu">
+                    <li><a href="/analytics/mais-performance.html" class="nav-link">أداء شركة ميس</a></li>
+                    <li><a href="/analytics/apf-performance.html" class="nav-link">أداء شركة APF</a></li>
+                    <li><a href="/analytics/market-trends.html" class="nav-link">تحليل السوق</a></li>
+                </ul>
+            </li>
+            <li class="nav-item has-submenu">
+                <a href="#" class="nav-link"><i class="fas fa-bullseye"></i> النمو والمبيعات</a>
+                <ul class="submenu">
+                    <li><a href="/growth/pipeline.html" class="nav-link">خط أنابيب المبيعات</a></li>
+                    <li><a href="/growth/lead-inbox.html" class="nav-link">صندوق الفرص</a></li>
+                    <li><a href="/growth/synergy-finder.html" class="nav-link">مكتشف التكامل</a></li>
+                    <li><a href="/growth/customers.html" class="nav-link">قاعدة العملاء</a></li>
+                </ul>
+            </li>
+            <li class="nav-item has-submenu">
+                <a href="#" class="nav-link"><i class="fas fa-cogs"></i> العمليات والكفاءة</a>
+                <ul class="submenu">
+                    <li><a href="/efficiency/suppliers.html" class="nav-link">قاعدة الموردين</a></li>
+                    <li><a href="/efficiency/supplier-analysis.html" class="nav-link">تحليل الموردين</a></li>
+                    <li><a href="/efficiency/production-planning.html" class="nav-link">تخطيط الإنتاج</a></li>
+                </ul>
+            </li>
+            <li class="nav-item has-submenu">
+                <a href="#" class="nav-link"><i class="fas fa-brain"></i> المعرفة</a>
+                <ul class="submenu">
+                    <li><a href="/knowledge/search.html" class="nav-link">بحث موحد</a></li>
+                    <li><a href="/knowledge/mais-products.html" class="nav-link">كتالوج المنتجات</a></li>
+                </ul>
+            </li>
+            <li class="nav-item has-submenu">
+                <a href="#" class="nav-link"><i class="fas fa-users"></i> المواهب</a>
+                <ul class="submenu">
+                    <li><a href="/talent/candidates.html" class="nav-link">بوابة المرشحين</a></li>
+                    <li><a href="/talent/strategic-recruitment.html" class="nav-link">التوظيف الاستراتيجي</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="/settings/users.html" class="nav-link"><i class="fas fa-cog"></i> الإعدادات</a>
+            </li>
+            <li class="nav-item">
+                <a href="/index.html" class="nav-link"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+<script>
+    // Script for submenu toggling
+    document.querySelectorAll('.sidebar .has-submenu > .nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const parentItem = link.parentElement;
+            parentItem.classList.toggle('open');
+        });
+    });
+</script>

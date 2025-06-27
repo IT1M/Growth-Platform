@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة معلومات ذكاء الأعمال</title>
+    <!-- أضف تضمين Font Awesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -18,6 +20,21 @@
             color: #333;
             direction: rtl;
             text-align: right;
+            /* أضف هامش يمين لمحتوى الصفحة ليتناسب مع القائمة الجانبية */
+            margin-right: 260px;
+        }
+
+        /* عند الشاشات الصغيرة، أزل الهامش */
+        @media (max-width: 900px) {
+            body {
+                margin-right: 0;
+            }
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                box-shadow: none;
+            }
         }
 
         .dashboard-container {
@@ -397,9 +414,86 @@
             direction: ltr;
             display: inline-block;
         }
+
+        /* أضف أنماط القائمة الجانبية */
+        .sidebar {
+            width: 260px;
+            background: #1e293b;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            right: 0;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            transition: right 0.3s ease;
+            z-index: 1000;
+        }
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            background: #0f172a;
+        }
+        .sidebar-header .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        .sidebar-nav {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .nav-item .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: background 0.3s, color 0.3s;
+            font-size: 1.1rem;
+        }
+        .nav-item .nav-link:hover, .nav-item .nav-link.active {
+            background: #334155;
+            color: white;
+            border-right: 4px solid #667eea;
+        }
+        .nav-item .nav-link i {
+            margin-left: 15px;
+            width: 20px;
+        }
+        .nav-item.has-submenu > .nav-link::after {
+            content: '▼';
+            margin-right: auto;
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+        .nav-item.has-submenu.open > .nav-link::after {
+            transform: rotate(180deg);
+        }
+        .submenu {
+            list-style: none;
+            padding: 0;
+            background: #273448;
+            display: none;
+        }
+        .nav-item.has-submenu.open .submenu {
+            display: block;
+        }
+        .submenu .nav-link {
+            padding-right: 45px;
+            font-size: 1rem;
+        }
     </style>
 </head>
 <body>
+    <!-- استبدل القائمة الجانبية المضمنة بـ iframe لتحميل sidebar.html -->
+    <iframe src="sidebar.html" style="width:260px;position:fixed;top:0;right:0;height:100vh;border:none;z-index:1000;" title="القائمة الجانبية"></iframe>
+
     <div class="dashboard-container">
         <header class="dashboard-header">
             <div class="user-info">

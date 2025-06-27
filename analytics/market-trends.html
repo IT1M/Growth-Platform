@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحليل اتجاهات السوق - منصة التحليلات</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .search-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 20px 60px 20px 20px;
+            font-size: 1.1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .search-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .search-btn {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .quick-queries {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .quick-query {
+            background: #f8f9fa;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #e1e5e9;
+        }
+        
+        .quick-query:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .summaries-section, .results-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-right: 4px solid #667eea;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .summary-card:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .summary-card.construction {
+            border-right-color: #28a745;
+        }
+        
+        .summary-card.pharma {
+            border-right-color: #007bff;
+        }
+        
+        .summary-card.cosmetics {
+            border-right-color: #e83e8c;
+        }
+        
+        .summary-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .summary-text {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .summary-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #999;
+        }
+        
+        .results-placeholder {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        
+        .results-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading i {
+            animation: spin 1s linear infinite;
+            font-size: 2rem;
+            color: #667eea;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result-content {
+            display: none;
+        }
+        
+        .result-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-right: 3px solid #667eea;
+        }
+        
+        .result-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .result-text {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #667eea;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .search-section {
+                padding: 20px;
+            }
+            
+            .quick-queries {
+                justify-content: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-chart-line"></i> تحليل اتجاهات السوق</h1>
+            <p>تحليلات مدعومة بالذكاء الاصطناعي لاتجاهات السوق في الخليج والشرق الأوسط</p>
+        </div>
+        
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="اسأل عن اتجاهات السوق... مثال: ما هو النمو المتوقع لحلول الحقن الوريدي في الخليج؟" id="searchInput">
+                <button class="search-btn" onclick="performSearch()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <div class="quick-queries">
+                <div class="quick-query" onclick="quickSearch('نمو سوق الأدوية في الخليج 2025')">نمو سوق الأدوية في الخليج</div>
+                <div class="quick-query" onclick="quickSearch('اتجاهات مستحضرات التجميل في السعودية')">مستحضرات التجميل السعودية</div>
+                <div class="quick-query" onclick="quickSearch('مشاريع البناء الكبرى في الإمارات')">مشاريع البناء الإماراتية</div>
+                <div class="quick-query" onclick="quickSearch('سوق الحقن الوريدي في قطر')">الحقن الوريدي في قطر</div>
+            </div>
+        </div>
+        
+        <div class="content-grid">
+            <div class="summaries-section">
+                <h2 class="section-title">
+                    <i class="fas fa-newspaper"></i>
+                    أحدث الملخصات
+                </h2>
+                
+                <div class="summary-card construction">
+                    <div class="summary-title">قطاع البناء والتشييد</div>
+                    <div class="summary-text">
+                        تشهد صناعة البناء في دول الخليج نمواً قوياً بنسبة 8.2% سنوياً، مدفوعة بمشاريع رؤية 2030 والاستثمارات الضخمة في البنية التحتية. المشاريع الذكية والمستدامة تقود السوق.
+                    </div>
+                    <div class="summary-meta">
+                        <span><i class="fas fa-clock"></i> منذ ساعتين</span>
+                        <span><i class="fas fa-chart-up"></i> +8.2%</span>
+                    </div>
+                </div>
+                
+                <div class="summary-card pharma">
+                    <div class="summary-title">الصناعات الدوائية</div>
+                    <div class="summary-text">
+                        سوق الأدوية في المنطقة يسجل نمواً متسارعاً خاصة في مجال الحقن الوريدية والعلاجات المتخصصة. الاستثمار في التصنيع المحلي يزداد بوتيرة عالية.
+                    </div>
+                    <div class="summary-meta">
+                        <span><i class="fas fa-clock"></i> منذ 4 ساعات</span>
+                        <span><i class="fas fa-chart-up"></i> +12.5%</span>
+                    </div>
+                </div>
+                
+                <div class="summary-card cosmetics">
+                    <div class="summary-title">مستحضرات التجميل</div>
+                    <div class="summary-text">
+                        قطاع التجميل يشهد ثورة حقيقية مع تزايد الطلب على المنتجات الطبيعية والحلال. العلامات التجارية المحلية تكتسب حصصاً سوقية مهمة.
+                    </div>
+                    <div class="summary-meta">
+                        <span><i class="fas fa-clock"></i> منذ 6 ساعات</span>
+                        <span><i class="fas fa-chart-up"></i> +15.3%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <h2 class="section-title">
+                    <i class="fas fa-robot"></i>
+                    نتائج التحليل
+                </h2>
+                
+                <div class="results-placeholder" id="placeholder">
+                    <i class="fas fa-brain"></i>
+                    <p>اطرح سؤالك لتحصل على تحليل مفصل مدعوم بالذكاء الاصطناعي</p>
+                </div>
+                
+                <div class="loading" id="loading">
+                    <i class="fas fa-cog"></i>
+                    <p>جارٍ تحليل البيانات...</p>
+                </div>
+                
+                <div class="result-content" id="results">
+                    <!-- Results will be populated here -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-number">45+</span>
+                <div class="stat-label">تقرير يومي</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">12</span>
+                <div class="stat-label">قطاع متابع</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">98%</span>
+                <div class="stat-label">دقة التحليل</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">24/7</span>
+                <div class="stat-label">مراقبة مستمرة</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function quickSearch(query) {
+            document.getElementById('searchInput').value = query;
+            performSearch();
+        }
+        
+        function performSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (!query.trim()) return;
+            
+            const placeholder = document.getElementById('placeholder');
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+            
+            // Hide placeholder and results, show loading
+            placeholder.style.display = 'none';
+            results.style.display = 'none';
+            loading.style.display = 'block';
+            
+            // Simulate AI processing
+            setTimeout(() => {
+                loading.style.display = 'none';
+                results.style.display = 'block';
+                
+                // Generate sample results based on query
+                generateResults(query);
+            }, 2000);
+        }
+        
+        function generateResults(query) {
+            const results = document.getElementById('results');
+            
+            let resultsHTML = '';
+            
+            if (query.includes('حقن') || query.includes('وريدي')) {
+                resultsHTML = `
+                    <div class="result-item">
+                        <div class="result-title">نمو سوق الحقن الوريدية في الخليج</div>
+                        <div class="result-text">
+                            يتوقع أن ينمو سوق حلول الحقن الوريدية في دول الخليج بنسبة 14.2% سنوياً حتى عام 2028، مدفوعاً بالتزايد في عدد المستشفيات والطلب على العلاجات المتخصصة. السعودية والإمارات تقودان هذا النمو.
+                        </div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-title">العوامل المؤثرة</div>
+                        <div class="result-text">
+                            • زيادة الاستثمار في القطاع الصحي<br>
+                            • ارتفاع معدلات الأمراض المزمنة<br>
+                            • التطور التكنولوجي في المعدات الطبية<br>
+                            • سياسات التوطين الصحي
+                        </div>
+                    </div>
+                `;
+            } else if (query.includes('تجميل') || query.includes('مستحضرات')) {
+                resultsHTML = `
+                    <div class="result-item">
+                        <div class="result-title">اتجاهات سوق مستحضرات التجميل</div>
+                        <div class="result-text">
+                            سوق مستحضرات التجميل في المنطقة ينمو بقوة خاصة في فئة المنتجات الحلال والطبيعية. النمو المتوقع 18.5% سنوياً مع تركز قوي على الابتكار والاستدامة.
+                        </div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-title">الفرص الاستثمارية</div>
+                        <div class="result-text">
+                            • العلامات التجارية المحلية الناشئة<br>
+                            • تقنيات التجميل الذكية<br>
+                            • منتجات العناية الرجالية<br>
+                            • قنوات التجارة الإلكترونية
+                        </div>
+                    </div>
+                `;
+            } else if (query.includes('بناء') || query.includes('تشييد')) {
+                resultsHTML = `
+                    <div class="result-item">
+                        <div class="result-title">مستقبل قطاع البناء والتشييد</div>
+                        <div class="result-text">
+                            القطاع يشهد تحولاً نحو التقنيات الذكية والبناء المستدام. الاستثمارات في المشاريع الضخمة كنيوم والعلا تخلق فرصاً استثنائية للنمو بنسبة 12.8% سنوياً.
+                        </div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-title">التوجهات الحديثة</div>
+                        <div class="result-text">
+                            • البناء الأخضر والمستدام<br>
+                            • تقنيات البناء المعياري<br>
+                            • الذكاء الاصطناعي في التصميم<br>
+                            • مواد البناء المبتكرة
+                        </div>
+                    </div>
+                `;
+            } else {
+                resultsHTML = `
+                    <div class="result-item">
+                        <div class="result-title">تحليل عام للسوق</div>
+                        <div class="result-text">
+                            الأسواق في منطقة الخليج تشهد نمواً قوياً عبر القطاعات المختلفة، مدفوعة برؤى التنمية الاقتصادية والاستثمار في التنويع الاقتصادي. النمو الإجمالي متوقع عند 8.5% سنوياً.
+                        </div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-title">القطاعات الواعدة</div>
+                        <div class="result-text">
+                            • التكنولوجيا والذكاء الاصطناعي<br>
+                            • الطاقة المتجددة<br>
+                            • السياحة والترفيه<br>
+                            • الخدمات الصحية المتطورة
+                        </div>
+                    </div>
+                `;
+            }
+            
+            results.innerHTML = resultsHTML;
+        }
+        
+        // Enable search on Enter key
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    </script>
+</body>
+</html>

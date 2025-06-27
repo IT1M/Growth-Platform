@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة نمو - تسجيل الدخول</title>
+    <style>
+        /* --- Estilo general --- */
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f4f7f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            direction: rtl;
+        }
+
+        /* --- Contenedor de inicio de sesión --- */
+        .login-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-sizing: border-box;
+            margin: 20px;
+        }
+
+        /* --- Marcador de posición del logotipo --- */
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1a237e; /* Un azul oscuro profesional */
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        /* --- Campos de entrada --- */
+        .input-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box; /* Importante para el relleno */
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #1a237e;
+        }
+
+        /* --- Botones y enlaces --- */
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background-color: #1a237e;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background-color: #283593;
+        }
+        
+        .links-container {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .links-container a {
+            color: #1a237e;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .links-container a:hover {
+            color: #5c6bc0;
+        }
+        
+        .separator {
+            margin: 20px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .partner-login-link {
+            font-size: 14px;
+        }
+
+        /* --- Capacidad de respuesta --- */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="logo">
+            منصة نمو
+        </div>
+        <h2>تسجيل دخول الموظفين</h2>
+        
+        <form action="/dashboard.html" method="post">
+            <div class="input-group">
+                <label for="email">البريد الإلكتروني</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="password">كلمة المرور</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn-login">تسجيل الدخول</button>
+        </form>
+        
+        <div class="links-container">
+            <a href="#">هل نسيت كلمة المرور؟</a>
+        </div>
+        
+        <div class="separator"></div>
+        
+        <div class="partner-login-link">
+            <a href="partner-login.html">تسجيل دخول الشركاء والموزعين</a>
+        </div>
+    </div>
+
+</body>
+</html>

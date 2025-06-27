@@ -1,96 +1,271 @@
-بالتأكيد. بناءً على الهيكلة التي صممناها، سأقوم الآن بكتابة مجموعة من الأوامر البرمجية (Prompts) التفصيلية التي يمكن لفريق التطوير أو التصميم استخدامها لبناء كل صفحة في "منصة نمو". كل أمر بمثابة بطاقة مهمة (Task Card) تحدد الهدف، المكونات، البيانات المطلوبة، ودور Gemini في تلك الصفحة.
+بالتأكيد. فهمت الآن أنك تريد جميع الأوامر (Prompts) اللازمة لبناء كل صفحات المنصة دفعة واحدة، من البداية إلى النهاية.
 
----
+سأقوم بتزويدك بـ "كتاب أوامر" (Prompt Book) كامل وشامل. كل أمر من الأوامر التالية مصمم ليعطي مطور الواجهة الأمامية تعليمات دقيقة ومفصلة لإنشاء صفحة محددة، معتمداً بشكل كامل على الهيكلة التي اتفقنا عليها.
 
-### **أوامر بناء صفحات "منصة نمو" (Growth Platform Prompts)**
+-----
 
-#### **1. لوحة المعلومات الرئيسية (Dashboard)**
+### **كتاب أوامر بناء "منصة نمو" (Growth Platform)**
 
-* **Prompt: بناء لوحة معلومات رئيسية ديناميكية (`/dashboard`)**
-    * **الهدف:** إنشاء شاشة رئيسية مخصصة تعرض أهم المؤشرات الحيوية للمستخدم فور تسجيل دخوله.
-    * **المستخدم:** تتغير المكونات بناءً على دور المستخدم (مدير تنفيذي، مدير مبيعات، مدير عمليات).
-    * **المكونات الأساسية:**
-        * **ويدجت (Widget) للمدير التنفيذي:**
-            * اعرض مؤشر الأداء الرئيسي (KPI) للربحية الإجمالية (MAIS + APF).
-            * اعرض مؤشر ربحية خط مستحضرات التجميل بشكل منفصل، مع تلوينه بالأحمر في حال الخسارة والأخضر في حال الربح. استخدم Gemini لتحليل بيانات الأرباح والخسائر (P&L) وتوليد ملخص نصي من سطر واحد مثل: "خط مستحضرات التجميل تسبب في خسارة 250 ألف ريال هذا الربع بسبب ارتفاع تكاليف التسويق."
-            * اعرض قائمة بأهم 3 "فرص تكامل" جديدة تم رصدها من وحدة `/growth/synergy-finder`.
-        * **ويدجت لمدير المبيعات:**
-            * اعرض رسماً بيانياً يوضح أداء المبيعات للفريق مقابل الهدف الشهري.
-            * اعرض عداداً للفرص البيعية الجديدة التي تم استلامها في `/growth/lead-inbox` خلال آخر 24 ساعة.
-            * اعرض قائمة بالصفقات في مرحلة "التفاوض".
+#### **الجزء الأول: البوابة الخارجية (قبل تسجيل الدخول)**
 
----
+**1. أمر إنشاء صفحة تسجيل الدخول للموظفين (`login.html`)**
 
-#### **2. وحدة ذكاء الأعمال (Analytics Hub)**
+```prompt
+**Role:** Expert frontend developer specializing in secure, professional authentication interfaces.
+[cite_start]**Task:** Generate the complete, responsive HTML5 and CSS code for the main employee login page (`login.html`)[cite: 155].
+**Context:** This is the primary entry point for all MAIS and APF employees. The design must be clean, modern, and trustworthy.
+**Key Components:**
+* Prominent platform logo ("منصة نمو").
+* [cite_start]A central login form with fields for "Email Address" and "Password"[cite: 156].
+* [cite_start]A "Log In" submit button[cite: 156].
+* [cite_start]Links for "Forgot Password?" and "Partner & Distributor Login" (`partner-login.html`)[cite: 156, 157].
+```
 
-* **Prompt: بناء صفحة تحليل أداء شركة ميس (`/analytics/mais-performance`)**
-    * **الهدف:** توفير رؤية تحليلية عميقة لربحية ومنتجات شركة ميس.
-    * **المستخدم:** الإدارة العليا، مديرو المبيعات في ميس.
-    * **المكونات:**
-        * خريطة تفاعلية للمملكة تظهر مواقع المشاريع الكبرى (من `scavo.sa`) التي تستخدم منتجات ميس.
-        * رسم بياني لتحليل المبيعات حسب فئة المنتج (مثبتات، شبكات تصريف، أغطية غرف تفتيش).
-        * جدول يوضح "هامش الربح" لكل منتج على حدة.
-        * **تكامل Gemini:** أضف زراً باسم "تحليل الربحية". عند الضغط عليه، يقوم Gemini بتحليل البيانات وعرض نص: "ملاحظة: أغطية غرف التفتيش تحقق أعلى هامش ربح (45%)، بينما المثبتات تحقق أقل هامش (15%) بسبب المنافسة السعرية. يوصى بالتركيز على بيع الأغطية في المشاريع الحكومية."
+**2. أمر إنشاء صفحة تسجيل دخول الشركاء (`partner-login.html`)**
 
-* **Prompt: بناء صفحة تحليل أداء شركة APF (`/analytics/apf-performance`)**
-    * **الهدف:** تشخيص دقيق لأداء كل خط إنتاج في APF لتحديد مصدر الخسائر.
-    * **المستخدم:** الإدارة العليا، مديرو APF.
-    * **المكونات:**
-        * استخدم تصميم "علامات التبويب" (Tabs) للفصل بين خطوط الإنتاج: [الأدوية]، [المطهرات]، [مستحضرات التجميل].
-        * **في تبويب "مستحضرات التجميل":**
-            * اعرض بوضوح بيان الأرباح والخسائر (P&L) لهذا الخط.
-            * اعرض مؤشرين رئيسيين: "العائد على الإنفاق الإعلاني (ROAS)" و "تكلفة اكتساب العميل (CAC)".
-            * **تكامل Gemini:** أنشئ "مساعد القرار" (Decision Assistant). يمكن للمدير أن يطرح سؤالاً: "ما هو المنتج الأكثر خسارة في خط التجميل ولماذا؟". يجيب Gemini بتحليل بيانات المبيعات والتكاليف: "منتج 'كريم الأساس الليلي' هو الأكثر خسارة، حيث بلغت تكلفة اكتساب العميل 3 أضعاف سعره، وحملته التسويقية لم تحقق تفاعلاً."
+```prompt
+**Role:** Frontend developer.
+[cite_start]**Task:** Generate the HTML5 and CSS code for the partner and distributor login page (`/partner-login.html`)[cite: 157].
+**Context:** This is a separate, simplified login page for external partners to access the Partner Portal.
+**Key Components:**
+* Similar design to the main login page for brand consistency.
+* Clear heading: "Partner & Distributor Portal Login".
+* Fields for "Partner ID" or "Email" and "Password".
+* A "Log In" button.
+* A link back to the main employee login page.
+```
 
----
+-----
 
-#### **3. وحدة النمو والمبيعات (Growth Hub)**
+#### **الجزء الثاني: الهيكل الداخلي للنظام (بعد تسجيل الدخول)**
 
-* **Prompt: بناء صفحة صندوق الفرص الواردة (`/growth/lead-inbox`)**
-    * **الهدف:** أتمتة عملية رصد وتوزيع الفرص البيعية الجديدة.
-    * **المستخدم:** مديرو المبيعات.
-    * **المكونات:**
-        * واجهة تشبه البريد الإلكتروني تعرض "بطاقات الفرص" الجديدة.
-        * كل بطاقة تحتوي على: اسم المشروع/المناقصة، المصدر (مثال: منصة اعتماد)، تاريخ الإعلان، ونبذة مختصرة.
-        * **تكامل Gemini:** يقوم Gemini تلقائياً بقراءة تفاصيل المناقصة وتوليد النبذة، بالإضافة إلى تحديد المنتجات ذات الصلة. مثال: "مناقصة بناء مستشفى جديد في جدة. المنتجات المقترحة: محاليل وريدية (APF)، شبكات تصريف (MAIS)."
-        * زر "تعيين" (Assign) بجانب كل فرصة، يسمح للمدير بإسنادها إلى مندوب مبيعات محدد.
+**3. أمر إنشاء لوحة المعلومات الرئيسية الديناميكية (`dashboard.html`)**
 
-* **Prompt: بناء صفحة مكتشف فرص التكامل (`/growth/synergy-finder`)**
-    * **الهدف:** تحويل التنافس إلى تعاون عبر إيجاد فرص بيع مشتركة.
-    * **المستخدم:** جميع فرق المبيعات.
-    * **المكونات:**
-        * اعرض قائمة بالمشاريع التي تتطلب منتجات من كلتا الشركتين.
-        * عند فوز MAIS بعقد، يقوم النظام تلقائياً بإنشاء "فرصة بيع متقاطع" (Cross-sell Opportunity) لفريق APF. مثال: "فازت MAIS بعقد توريد أغطية غرف تفتيش لمصنع أغذية. **فرصة لـ APF:** عرض منتجات Dr. Disinfectant المطابقة لمعايير الصحة الغذائية على نفس العميل."
-        * **تكامل Gemini:** يقوم Gemini بصياغة مسودة بريد إلكتروني لمندوب مبيعات APF ليتواصل مع العميل الجديد، مع ذكر العلاقة القائمة عبر MAIS.
+```prompt
+**Role:** Senior frontend developer specializing in role-based business intelligence dashboards.
+[cite_start]**Task:** Generate the HTML5 and CSS for the main dashboard (`/dashboard.html`), structured to display different widgets based on user roles[cite: 159].
+**Context:** This is the dynamic landing page after login, providing a tailored KPI summary.
+**Key Components (Create all, to be shown/hidden with JS later):**
+* [cite_start]**Executive View[cite: 160]:**
+    * [cite_start]Consolidated Financial Health (MAIS + APF)[cite: 160].
+    * [cite_start]Profitability Spotlight: APF Cosmetics Line (Red/Green indicator)[cite: 161].
+    * [cite_start]Top 3 Synergy Opportunities list[cite: 161].
+    * [cite_start]Overall Sales vs. Target gauge chart[cite: 162].
+* [cite_start]**Sales Manager View[cite: 162]:**
+    * [cite_start]Sales Team Performance bar chart[cite: 162].
+    * [cite_start]New Leads Ticker (last 24h)[cite: 163].
+    * [cite_start]"Deals Nearing Closure" table[cite: 163].
+```
 
----
+**4. أمر إنشاء صفحة تحليل أداء شركة ميس (`/analytics/mais-performance.html`)**
 
-#### **4. وحدة المعرفة (Knowledge Hub)**
+```prompt
+**Role:** Data visualization specialist.
+[cite_start]**Task:** Generate the HTML5 and CSS for the MAIS performance analytics page (`/analytics/mais-performance.html`)[cite: 165].
+**Context:** A deep-dive page to analyze the performance of the profitable industrial pillar, MAIS.
+**Key Components:**
+* [cite_start]Donut chart for sales by product (Fasteners, Grating, etc.)[cite: 165].
+* [cite_start]A detailed table showing live profit margin per product[cite: 166].
+* [cite_start]A module linking sales to major projects (NEOM, Red Sea) using data from sources like `scavo.sa`[cite: 166].
+* [cite_start]A competitor watch feed for entities like Zamil Industrial[cite: 167].
+```
 
-* **Prompt: بناء محرك البحث الموحد (`/knowledge/search`)**
-    * **الهدف:** إنشاء مصدر واحد للحقيقة لجميع معلومات الشركة ومنتجاتها.
-    * **المستخدم:** جميع موظفي الشركة.
-    * **المكونات:**
-        * شريط بحث بسيط وكبير في وسط الصفحة.
-        * **تكامل Gemini:** المحرك بالكامل مدعوم بـ Gemini. يجب أن يفهم اللغة الطبيعية واللهجة المحلية.
-        * **أمثلة على عمليات البحث:**
-            * "أعطني المواصفات الفنية للمثبتات المقاومة للأحمال العالية."
-            * "كم مدة صلاحية محلول الميترونيدازول حقنا؟"
-            * "من هو العميل الرئيسي لمنتجات المطهرات في المنطقة الشرقية؟"
-        * يجب أن تستشهد الإجابات بمصادرها الداخلية (مثل: "حسب كتالوج منتجات APF، صفحة 23").
+**5. أمر إنشاء صفحة تحليل أداء شركة APF (`/analytics/apf-performance.html`)**
 
----
+```prompt
+**Role:** Data visualization specialist with pharma/retail experience.
+**Task:** Generate the HTML5 and CSS for the APF performance analytics page (`/analytics/apf-performance.html`).
+**Context:** The most critical diagnostic page to clearly show the financial performance of each APF business line. Clarity is paramount.
+**Key Components:**
+* Use a tabbed interface for the three sections.
+* **Pharma Tab:** Tender Win/Loss Ratio; [cite_start]Profitability Matrix for each drug[cite: 167].
+* [cite_start]**Disinfectants Tab:** Sales performance charts for Dr. Disinfectant[cite: 168].
+* **Cosmetics Tab (Most Important):** A clear, real-time P&L statement, including Revenue, COGS, Marketing Spend, and Net Profit/Loss. [cite_start]Also display ROAS and CAC metrics prominently[cite: 168].
+```
 
-#### **5. بوابة الشركاء والموزعين (Partner Portal)**
+**6. أمر إنشاء صفحة تحليل توجهات السوق (`/analytics/market-trends.html`)**
 
-* **Prompt: بناء روبوت الدعم الفني للموزعين (`/portal/support`)**
-    * **الهدف:** تقديم دعم فوري على مدار الساعة للموزعين وتقليل العبء على فريق الدعم.
-    * **المستخدم:** الشركاء والموزعون.
-    * **المكونات:**
-        * واجهة محادثة (Chat) بسيطة.
-        * **تكامل Gemini:** الروبوت مدعوم بالكامل بـ Gemini، وقد تم تدريبه حصرياً على بيانات المنتجات، الأسعار الخاصة بالموزعين، وسياسات الشحن والإرجاع.
-        * **أمثلة على حوارات الروبوت:**
-            * الموزع: "أبغى أطلب 500 كرتون باراسيتامول، كم السعر؟"
-            * الروبوت: "أهلاً بك. سعر 500 كرتون هو X ريال حسب قائمة أسعاركم المعتمدة. هل أجهز لك الطلب؟"
-            * الموزع: "متى توصل شحنتي الأخيرة؟"
-            * الروبوت (بعد الوصول لبيانات الطلبات): "شحنتك رقم #12345 من المتوقع أن تصل إليك خلال يومي عمل."
+```prompt
+**Role:** Frontend developer integrating AI interfaces.
+[cite_start]**Task:** Generate the HTML5 and CSS for the market trends page (`/analytics/market-trends.html`)[cite: 169].
+**Context:** This page leverages the Gemini API to provide live market analysis.
+**Key Components:**
+* A large search/query bar at the top with a prompt like: "Ask about market trends...".
+* [cite_start]A section for "Latest Summaries" displaying AI-generated summaries of recent market reports for construction, pharma, and cosmetics[cite: 169].
+* An output area where the user's query results will be displayed. [cite_start]Example query: "What is the projected growth for IV solutions in the Gulf?"[cite: 170].
+```
+
+**7. أمر إنشاء عرض خط أنابيب المبيعات (`/growth/pipeline.html`)**
+
+```prompt
+**Role:** UI/UX designer and developer.
+[cite_start]**Task:** Generate the HTML5 and CSS for the visual sales pipeline (`/growth/pipeline.html`)[cite: 172].
+**Context:** A visual tool for sales teams to track deals through various stages.
+**Key Components:**
+* A Kanban board layout.
+* [cite_start]Columns representing sales stages: "New Lead", "Initial Contact", "Proposal Sent", "Negotiation", "Won", "Lost"[cite: 172].
+* Draggable "deal cards" within the columns. Each card should show customer name, deal value, and assigned salesperson.
+```
+
+**8. أمر إنشاء صندوق الفرص الواردة الآلي (`/growth/lead-inbox.html`)**
+
+```prompt
+**Role:** Senior frontend developer.
+[cite_start]**Task:** Generate the HTML5 and CSS for the 'Lead Inbox' (`/growth/lead-inbox.html`)[cite: 173].
+**Context:** This is the central hub where new, automatically detected opportunities from government and project platforms appear.
+**Key Components:**
+* A list view of new leads.
+* [cite_start]Each lead item must show: Source (e.g., "Etimad Platform"), Title, and an AI-generated summary[cite: 173, 89].
+* [cite_start]An "Assign to" dropdown on each lead to delegate it to a salesperson[cite: 174].
+* A "Dismiss" button for irrelevant leads.
+```
+
+**9. أمر إنشاء مكتشف فرص التكامل (`/growth/synergy-finder.html`)**
+
+```prompt
+**Role:** UI/UX designer and developer.
+[cite_start]**Task:** Generate the HTML5 and CSS for the unique 'Synergy Finder' page (`/growth/synergy-finder.html`)[cite: 174].
+**Context:** This page visualizes the core strategy: finding projects where both MAIS and APF can sell products.
+**Key Components:**
+* A "Parent-Child" layout.
+* [cite_start]**Parent Card:** Displays the main project (e.g., "King Salman Park Development")[cite: 175].
+* [cite_start]**Child Cards (nested below):** One card for the MAIS opportunity (e.g., "Supply anchor bolts") and another for the APF opportunity (e.g., "Supply IV solutions"), visually linked to the parent project[cite: 175].
+```
+
+**10. أمر إنشاء قاعدة بيانات العملاء (`/growth/customers.html`)**
+
+```prompt
+**Role:** Frontend developer.
+[cite_start]**Task:** Generate the HTML5 and CSS for the customer database page (`/growth/customers.html`)[cite: 176].
+**Context:** A centralized, searchable directory of all corporate customers.
+**Key Components:**
+* A powerful search bar at the top to search by company name or contact person.
+* A filterable, sortable table view of customers.
+* Columns for: Company Name, Primary Contact, Last Interaction Date, Total Sales Value.
+* A button to "Add New Customer".
+```
+
+**11. أمر إنشاء قاعدة بيانات الموردين (`/efficiency/suppliers.html`)**
+
+```prompt
+**Role:** Frontend developer.
+[cite_start]**Task:** Generate the HTML5 and CSS for the supplier database page (`/efficiency/suppliers.html`)[cite: 178].
+**Context:** A centralized directory for managing raw material suppliers for both MAIS and APF.
+**Key Components:**
+* Search and filter options (e.g., by material type like "Steel" or "APIs").
+* A table view of suppliers with columns for: Supplier Name, Material Supplied, Lead Time, and a Rating.
+```
+
+**12. أمر إنشاء أداة تحليل الموردين (`/efficiency/supplier-analysis.html`)**
+
+```prompt
+**Role:** Frontend developer integrating AI interfaces.
+[cite_start]**Task:** Generate the HTML5 and CSS for the Gemini-powered supplier analysis tool (`/efficiency/supplier-analysis.html`)[cite: 179].
+**Context:** An AI tool for the procurement department to compare supplier contracts.
+**Key Components:**
+* Two large text areas side-by-side, one for "Current Contract" and one for "New Proposal".
+* A button: "Analyze & Compare".
+* [cite_start]An output area below that will display Gemini's analysis, highlighting differences in price, payment terms, and liabilities[cite: 179].
+```
+
+**13. أمر إنشاء لوحة تخطيط الإنتاج (`/efficiency/production-planning.html`)**
+
+```prompt
+**Role:** UI/UX designer.
+[cite_start]**Task:** Generate the HTML5 and CSS for the production planning board (`/efficiency/production-planning.html`)[cite: 180].
+**Context:** A dashboard that links sales forecasts to factory production schedules.
+**Key Components:**
+* A timeline view (Gantt chart style).
+* Rows representing production lines (e.g., "MAIS Anchor Bolts Line", "APF IV Solutions Line").
+* Blocks on the timeline representing production runs, linked to specific sales orders or forecasts.
+* Visual alerts for potential material shortages or capacity bottlenecks.
+```
+
+**14. أمر إنشاء محرك البحث الموحد (`/knowledge/search.html`)**
+
+```prompt
+**Role:** Senior frontend developer.
+[cite_start]**Task:** Generate the HTML5 and CSS for the unified knowledge hub search engine (`/knowledge/search.html`)[cite: 182].
+**Context:** A single, powerful search bar for any employee to ask questions in natural language and get answers from the entire company's knowledge base.
+**Key Components:**
+* A prominent, centered search bar as the main focus of the page.
+* [cite_start]Example prompts displayed below the bar, like "ما هي مواصفات شبكات التصريف المقاومة للصدأ؟" or "ما هي مدة صلاحية محلول الميترونيدازول؟"[cite: 182, 183].
+* A clean, uncluttered results area.
+```
+
+**15. أمر إنشاء كتالوجات المنتجات (`/knowledge/mais-products.html` و `/knowledge/apf-products.html`)**
+
+```prompt
+**Role:** Frontend developer.
+**Task:** Generate the HTML5 and CSS for a detailed product catalog page. [cite_start]This template will be used for both MAIS products [cite: 184] [cite_start]and APF products[cite: 185].
+**Context:** A reference library for all company products.
+**Key Components:**
+* A sidebar for category filtering (e.g., "Fasteners", "Injectables").
+* A grid view of product cards.
+* Each card shows: Product Image, Product Name, and a short description.
+* Clicking a card should lead to a detailed product page (not included in this prompt) with full technical specifications, compliance documents, etc.
+```
+
+**16. أمر إنشاء صفحة التوظيف الاستراتيجي (`/talent/strategic-recruitment.html`)**
+
+```prompt
+**Role:** UI/UX designer.
+[cite_start]**Task:** Generate the HTML5 and CSS for the strategic recruitment page (`/talent/strategic-recruitment.html`)[cite: 187].
+**Context:** A page that connects business intelligence to HR, recommending hiring based on business growth data.
+**Key Components:**
+* [cite_start]A section for "AI-Powered Hiring Recommendations"[cite: 188].
+* [cite_start]Recommendation cards, for example: "Growth of 20% detected in disinfectant sales. **Recommendation:** Hire 2 new sales reps with industrial chemicals experience."[cite: 188].
+* Each recommendation should have a "Create Job Posting" button.
+```
+
+**17. أمر إنشاء بوابة المرشحين (`/talent/candidates.html`)**
+
+```prompt
+**Role:** Frontend developer.
+[cite_start]**Task:** Generate the HTML5 and CSS for the candidate management portal (`/talent/candidates.html`)[cite: 189].
+**Context:** An advanced view for HR to manage job applicants.
+**Key Components:**
+* A filterable list of candidates.
+* Filters for: Job Applied For, Status (New, Interviewing, Hired), AI-Screening Score.
+* Each candidate row should be expandable to see their resume summary and application details.
+```
+
+**18. أمر إنشاء صفحات الإعدادات (e.g., `/settings/users.html`)**
+
+```prompt
+**Role:** Frontend developer.
+[cite_start]**Task:** Generate the HTML5 and CSS for a standard settings page template, to be used for User Management (`/settings/users.html`), Integrations, and Account pages[cite: 190].
+**Context:** Standard administrative pages for system management.
+**Key Components:**
+* A clean, tabbed interface for different settings sections.
+* For User Management: A table of users with columns for Name, Email, Role, and an "Edit/Remove" button.
+* An "Add New User" button that would open a form.
+```
+
+-----
+
+#### **الجزء الثالث: بوابة الشركاء والموزعين (Partner Portal)**
+
+**19. أمر إنشاء لوحة معلومات الشريك (`/portal/dashboard.html`)**
+
+```prompt
+**Role:** Frontend developer.
+[cite_start]**Task:** Generate the HTML5 and CSS for the partner portal dashboard (`/portal/dashboard.html`)[cite: 191].
+**Context:** A simplified dashboard for external partners after they log in.
+**Key Components:**
+* A welcome message for the partner.
+* A prominent section for "Recent Orders" showing the status of their last 5 orders.
+* [cite_start]A section for "Announcements & New Products" from the company[cite: 191].
+```
+
+**20. أمر إنشاء باقي صفحات بوابة الشركاء (`/portal/products.html`, `/portal/new-order.html`, `/portal/support.html`)**
+
+```prompt
+**Role:** Frontend developer.
+**Task:** Generate the HTML5 and CSS for the remaining partner portal pages based on a unified template.
+**Context:** Simple, functional pages for partners to browse products, place orders, and get help.
+**Key Components:**
+* [cite_start]**Products Page (`/portal/products.html`):** A grid view of products available to partners, with their specific pricing[cite: 192].
+* [cite_start]**New Order Page (`/portal/new-order.html`):** A simple form to create a new purchase order with fields for Product, Quantity, and Delivery Address[cite: 193].
+* [cite_start]**Support Page (`/portal/support.html`):** An FAQ section and a contact form or chatbot interface for support queries[cite: 194].
+```

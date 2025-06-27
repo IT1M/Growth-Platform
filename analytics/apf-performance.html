@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحليلات أداء APF - صندوق الأدوية المتقدمة</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2E86AB 0%, #A23B72 50%, #F18F01 100%);
+            min-height: 100vh;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #2E86AB, #A23B72);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.3em;
+        }
+
+        .tabs-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .tabs-nav {
+            display: flex;
+            background: linear-gradient(135deg, #2E86AB, #A23B72);
+            border-bottom: 3px solid #F18F01;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-button.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #F18F01;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 40px;
+            min-height: 600px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Pharma Tab Styles */
+        .pharma-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: rgba(46, 134, 171, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #2E86AB;
+        }
+
+        .metric-title {
+            font-size: 1.4em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .win-loss-chart {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            position: relative;
+        }
+
+        .win-loss-bar {
+            width: 60px;
+            border-radius: 10px;
+            margin: 0 20px;
+            position: relative;
+            background: #ecf0f1;
+        }
+
+        .win-bar {
+            background: linear-gradient(180deg, #27ae60, #2ecc71);
+            border-radius: 10px;
+        }
+
+        .loss-bar {
+            background: linear-gradient(180deg, #e74c3c, #c0392b);
+            border-radius: 10px;
+        }
+
+        .profitability-matrix {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .drug-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .drug-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .drug-name {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .drug-profit {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .profit-high { color: #27ae60; }
+        .profit-medium { color: #f39c12; }
+        .profit-low { color: #e74c3c; }
+
+        /* Disinfectants Tab Styles */
+        .disinfectant-section {
+            background: rgba(162, 59, 114, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            border-left: 5px solid #A23B72;
+        }
+
+        .sales-chart {
+            height: 300px;
+            position: relative;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            height: 200px;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(180deg, #A23B72, #C84B7C);
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.8;
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9em;
+            color: #2c3e50;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* Cosmetics Tab Styles */
+        .cosmetics-dashboard {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .pnl-statement {
+            background: rgba(241, 143, 1, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            border-left: 5px solid #F18F01;
+        }
+
+        .pnl-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .pnl-table th,
+        .pnl-table td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .pnl-table th {
+            background: linear-gradient(45deg, #F18F01, #FFA726);
+            color: white;
+            font-weight: bold;
+        }
+
+        .pnl-revenue { color: #27ae60; font-weight: bold; }
+        .pnl-expense { color: #e74c3c; }
+        .pnl-profit { color: #2E86AB; font-weight: bold; font-size: 1.2em; }
+
+        .metrics-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-bottom: 5px solid #F18F01;
+        }
+
+        .kpi-title {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .kpi-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .kpi-trend {
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .trend-up { color: #27ae60; }
+        .trend-down { color: #e74c3c; }
+
+        .live-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #27ae60;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .tabs-nav {
+                flex-direction: column;
+            }
+            
+            .pharma-grid,
+            .cosmetics-dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-excellent { background: #d5f4e6; color: #27ae60; }
+        .status-good { background: #fff3cd; color: #f39c12; }
+        .status-poor { background: #f8d7da; color: #e74c3c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>تحليلات أداء APF - صندوق الأدوية المتقدمة</h1>
+            <p>التحليل المالي الشامل لخطوط الأعمال: الأدوية • المطهرات • مستحضرات التجميل</p>
+        </div>
+
+        <!-- Tabs Container -->
+        <div class="tabs-container">
+            <!-- Tabs Navigation -->
+            <div class="tabs-nav">
+                <button class="tab-button active" onclick="showTab('pharma')">💊 الأدوية</button>
+                <button class="tab-button" onclick="showTab('disinfectants')">🧴 المطهرات</button>
+                <button class="tab-button" onclick="showTab('cosmetics')">💄 مستحضرات التجميل</button>
+            </div>
+
+            <!-- Pharma Tab -->
+            <div class="tab-content active" id="pharma">
+                <div class="pharma-grid">
+                    <!-- Tender Win/Loss Ratio -->
+                    <div class="metric-card">
+                        <h3 class="metric-title">نسبة ربح/خسارة المناقصات</h3>
+                        <div class="win-loss-chart">
+                            <div style="text-align: center;">
+                                <div class="win-loss-bar" style="height: 200px;">
+                                    <div class="win-bar" style="height: 75%; margin-top: 25%;"></div>
+                                </div>
+                                <div style="margin-top: 10px;">
+                                    <strong style="color: #27ae60;">فوز: 75%</strong>
+                                </div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div class="win-loss-bar" style="height: 200px;">
+                                    <div class="loss-bar" style="height: 25%; margin-top: 75%;"></div>
+                                </div>
+                                <div style="margin-top: 10px;">
+                                    <strong style="color: #e74c3c;">خسارة: 25%</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <span class="status-badge status-excellent">أداء ممتاز</span>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="metric-card">
+                        <h3 class="metric-title">إحصائيات سريعة</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                            <div style="text-align: center; padding: 20px; background: white; border-radius: 10px;">
+                                <div style="font-size: 2em; font-weight: bold; color: #2E86AB;">142</div>
+                                <div style="color: #7f8c8d;">إجمالي المناقصات</div>
+                            </div>
+                            <div style="text-align: center; padding: 20px; background: white; border-radius: 10px;">
+                                <div style="font-size: 2em; font-weight: bold; color: #27ae60;">106</div>
+                                <div style="color: #7f8c8d;">مناقصات مربحة</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profitability Matrix -->
+                <div class="metric-card">
+                    <h3 class="metric-title">مصفوفة الربحية لكل دواء</h3>
+                    <div class="profitability-matrix">
+                        <div class="drug-card">
+                            <div class="drug-name">أموكسيسيلين</div>
+                            <div class="drug-profit profit-high">+28.5%</div>
+                            <div style="margin-top: 10px;">
+                                <span class="status-badge status-excellent">عالي الربحية</span>
+                            </div>
+                        </div>
+                        <div class="drug-card">
+                            <div class="drug-name">إيبوبروفين</div>
+                            <div class="drug-profit profit-high">+22.3%</div>
+                            <div style="margin-top: 10px;">
+                                <span class="status-badge status-excellent">عالي الربحية</span>
+                            </div>
+                        </div>
+                        <div class="drug-card">
+                            <div class="drug-name">باراسيتامول</div>
+                            <div class="drug-profit profit-medium">+15.7%</div>
+                            <div style="margin-top: 10px;">
+                                <span class="status-badge status-good">متوسط الربحية</span>
+                            </div>
+                        </div>
+                        <div class="drug-card">
+                            <div class="drug-name">أسبرين</div>
+                            <div class="drug-profit profit-medium">+12.4%</div>
+                            <div style="margin-top: 10px;">
+                                <span class="status-badge status-good">متوسط الربحية</span>
+                            </div>
+                        </div>
+                        <div class="drug-card">
+                            <div class="drug-name">أوميبرازول</div>
+                            <div class="drug-profit profit-low">+6.2%</div>
+                            <div style="margin-top: 10px;">
+                                <span class="status-badge status-poor">منخفض الربحية</span>
+                            </div>
+                        </div>
+                        <div class="drug-card">
+                            <div class="drug-name">سيتريزين</div>
+                            <div class="drug-profit profit-low">+4.8%</div>
+                            <div style="margin-top: 10px;">
+                                <span class="status-badge status-poor">منخفض الربحية</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disinfectants Tab -->
+            <div class="tab-content" id="disinfectants">
+                <div class="disinfectant-section">
+                    <h3 class="metric-title">أداء مبيعات دكتور المطهرات</h3>
+                    
+                    <!-- Sales Performance Chart -->
+                    <div class="sales-chart">
+                        <h4 style="text-align: center; color: #2c3e50; margin-bottom: 20px;">المبيعات الشهرية (بآلاف الريالات)</h4>
+                        <div class="chart-bars">
+                            <div class="chart-bar" style="height: 60%;">
+                                <div class="bar-value">1,200</div>
+                                <div class="bar-label">يناير</div>
+                            </div>
+                            <div class="chart-bar" style="height: 75%;">
+                                <div class="bar-value">1,500</div>
+                                <div class="bar-label">فبراير</div>
+                            </div>
+                            <div class="chart-bar" style="height: 85%;">
+                                <div class="bar-value">1,700</div>
+                                <div class="bar-label">مارس</div>
+                            </div>
+                            <div class="chart-bar" style="height: 70%;">
+                                <div class="bar-value">1,400</div>
+                                <div class="bar-label">أبريل</div>
+                            </div>
+                            <div class="chart-bar" style="height: 90%;">
+                                <div class="bar-value">1,800</div>
+                                <div class="bar-label">مايو</div>
+                            </div>
+                            <div class="chart-bar" style="height: 100%;">
+                                <div class="bar-value">2,000</div>
+                                <div class="bar-label">يونيو</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Performance Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px;">
+                        <div class="drug-card">
+                            <div class="drug-name">مطهر الأيدي المضاد للبكتيريا</div>
+                            <div style="font-size: 1.3em; color: #A23B72; font-weight: bold;">450 ألف ريال</div>
+                            <div style="margin-top: 10px;">
+                                <span class="status-badge status-excellent">الأعلى مبيعاً</span>
+                            </div>
+                        </div>
+                        <div class="drug-card">
+                            <div class="drug-name">مطهر الأسطح متعدد الاستخدامات</div>
+                            <div style="font-size: 1.3em; color: #A23B72; font-weight: bold;">320 ألف ريال</div>
+                            <div style="margin-top: 10px;">
+                                <span class="status-badge status-good">أداء جيد</span>
+                            </div>
+                        </div>
+                        <div class="drug-card">
+                            <div class="drug-name">جل مطهر للأطفال</div>
+                            <div style="font-size: 1.3em; color: #A23B72; font-weight: bold;">180 ألف ريال</div>
+                            <div style="margin-top: 10px;">
+                                <span class="status-badge status-good">نمو مستقر</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cosmetics Tab -->
+            <div class="tab-content" id="cosmetics">
+                <div class="cosmetics-dashboard">
+                    <!-- P&L Statement -->
+                    <div class="pnl-statement">
+                        <h3 class="metric-title">بيان الأرباح والخسائر المباشر <span class="live-indicator"></span></h3>
+                        <table class="pnl-table">
+                            <thead>
+                                <tr>
+                                    <th>البند</th>
+                                    <th>القيمة (ريال)</th>
+                                    <th>النسبة المئوية</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>إجمالي الإيرادات</strong></td>
+                                    <td class="pnl-revenue">3,450,000</td>
+                                    <td class="pnl-revenue">100%</td>
+                                </tr>
+                                <tr>
+                                    <td>تكلفة البضاعة المباعة</td>
+                                    <td class="pnl-expense">(1,380,000)</td>
+                                    <td class="pnl-expense">40%</td>
+                                </tr>
+                                <tr style="background: #f8f9fa;">
+                                    <td><strong>إجمالي الربح</strong></td>
+                                    <td class="pnl-revenue">2,070,000</td>
+                                    <td class="pnl-revenue">60%</td>
+                                </tr>
+                                <tr>
+                                    <td>مصروفات التسويق</td>
+                                    <td class="pnl-expense">(690,000)</td>
+                                    <td class="pnl-expense">20%</td>
+                                </tr>
+                                <tr>
+                                    <td>مصروفات تشغيلية أخرى</td>
+                                    <td class="pnl-expense">(345,000)</td>
+                                    <td class="pnl-expense">10%</td>
+                                </tr>
+                                <tr style="background: #e8f5e8; border-top: 3px solid #27ae60;">
+                                    <td><strong>صافي الربح</strong></td>
+                                    <td class="pnl-profit">1,035,000</td>
+                                    <td class="pnl-profit">30%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- KPI Metrics Panel -->
+                    <div class="metrics-panel">
+                        <div class="kpi-card">
+                            <div class="kpi-title">عائد الاستثمار الإعلاني (ROAS)</div>
+                            <div class="kpi-value" style="color: #27ae60;">4.2x</div>
+                            <div class="kpi-trend trend-up">↗ +0.3 من الشهر الماضي</div>
+                        </div>
+
+                        <div class="kpi-card">
+                            <div class="kpi-title">تكلفة اكتساب العميل (CAC)</div>
+                            <div class="kpi-value" style="color: #F18F01;">125 ريال</div>
+                            <div class="kpi-trend trend-down">↘ -15 ريال من الشهر الماضي</div>
+                        </div>
+
+                        <div class="kpi-card">
+                            <div class="kpi-title">متوسط قيمة الطلب</div>
+                            <div class="kpi-value" style="color: #2E86AB;">287 ريال</div>
+                            <div class="kpi-trend trend-up">↗ +12% نمو شهري</div>
+                        </div>
+
+                        <div class="kpi-card">
+                            <div class="kpi-title">معدل التحويل</div>
+                            <div class="kpi-value" style="color: #A23B72;">3.8%</div>
+                            <div class="kpi-trend trend-up">↗ +0.5% تحسن</div>
+                        </div>
+
+                        <div class="kpi-card">
+                            <div class="kpi-title">نقاط صافي المروج (NPS)</div>
+                            <div class="kpi-value" style="color: #27ae60;">72</div>
+                            <div class="kpi-trend trend-up">↗ ممتاز (+8 نقاط)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Performance Summary -->
+                <div style="margin-top: 30px; background: rgba(241, 143, 1, 0.1); border-radius: 15px; padding: 25px;">
+                    <h3 class="metric-title">أفضل منتجات مستحضرات التجميل أداءً</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                        <div class="drug-card">
+                            <div class="drug-name">كريم مضاد للشيخوخة</div>
+                            <div style="font-size: 1.3em; color: #F18F01; font-weight: bold;">890,000 ريال</div>
+                            <div style="margin-top: 10px;">
+                                <span class="status-badge status-excellent">الأعلى ربحية</span>
+                            </div>
+                        </div>
+                        <div class="drug-card">
+                            <div class="drug-name">سيروم فيتامين C</div>
+                            <div style="font-size: 1.3em; color: #F18F01; font-weight: bold;">650,000 ريال</div>
+                            <div style="margin-top: 10px;">
+                                <span class="status-badge status-excellent">نمو سريع</span>
+                            </div>
+                        </div>
+                        <div class="drug-card">
+                            <div class="drug-name">ماسك الوجه المرطب</div>
+                            <div style="font-size: 1.3em; color: #F18F01; font-weight: bold;">420,000 ريال</div>
+                            <div style="margin-top: 10px;">
+                                <span class="status-badge status-good">أداء ثابت</span>
+                            </div>
+                        </div>
+                        <div class="drug-card">
+                            <div class="drug-name">غسول الوجه الطبيعي</div>
+                            <div style="font-size: 1.3em; color: #F18F01; font-weight: bold;">320,000 ريال</div>
+                            <div style="margin-top: 10px;">
+                                <span class="status-badge status-good">إمكانات عالية</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // إخفاء جميع المحتويات
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // إزالة التنشيط من جميع الأزرار
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // إظهار المحتوى المطلوب
+            document.getElementById(tabName).classList.add('active');
+            
+            // تنشيط الزر المطلوب
+            event.target.classList.add('active');
+        }
+
+        // تحديث البيانات المباشرة كل 30 ثانية
+        function updateLiveData() {
+            // تحديث بيانات الأرباح والخسائر
+            const revenueCell = document.querySelector('.pnl-revenue');
+            if (revenueCell && revenueCell.textContent.includes('3,450,000')) {
+                const variation = Math.floor(Math.random() * 50000) - 25000;
+                const newRevenue = 3450000 + variation;
+                revenueCell.textContent = newRevenue.toLocaleString();
+            }
+
+            // تحديث مؤشرات الأداء الرئيسية
+            const roasValue = document.querySelector('.kpi-value[style*="color: #27ae60"]');
+            if (roasValue && roasValue.textContent.includes('4.2x')) {
+                const newRoas = (4.2 + (Math.random() - 0.5) * 0.2).toFixed(1);
+                roasValue.textContent = newRoas + 'x';
+            }
+        }
+
+        // تحديث البيانات كل 30 ثانية
+        setInterval(updateLiveData, 30000);
+
+        // إضافة تأثيرات تفاعلية
+        document.querySelectorAll('.drug-card, .kpi-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+                this.style.transition = 'all 0.3s ease';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // تأثير تفاعلي للأعمدة البيانية
+        document.querySelectorAll('.chart-bar').forEach(bar => {
+            bar.addEventListener('mouseenter', function() {
+                this.style.transform = 'scaleY(1.1)';
+                this.style.transformOrigin = 'bottom';
+            });
+            
+            bar.addEventListener('mouseleave', function() {
+                this.style.transform = 'scaleY(1)';
+            });
+        });
+    </script>
+</body>
+</html>

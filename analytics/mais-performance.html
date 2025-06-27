@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحليلات أداء مايس - MAIS Performance Analytics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-title {
+            font-size: 1.5em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .donut-chart {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+        }
+
+        .donut-segment {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            transform: rotate(-90deg);
+        }
+
+        .chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+
+        .table-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .data-table th {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            font-weight: bold;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .data-table tr:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .profit-positive {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .profit-negative {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .projects-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .project-title {
+            font-size: 1.3em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .project-metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .competitor-feed {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .feed-item {
+            padding: 15px;
+            border-bottom: 1px solid #ecf0f1;
+            transition: all 0.3s ease;
+        }
+
+        .feed-item:hover {
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 10px;
+        }
+
+        .feed-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .feed-meta {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 8px;
+        }
+
+        .status-up {
+            background: #27ae60;
+        }
+
+        .status-down {
+            background: #e74c3c;
+        }
+
+        .status-stable {
+            background: #f39c12;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid,
+            .projects-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .donut-chart {
+                width: 250px;
+                height: 250px;
+            }
+        }
+
+        .live-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #27ae60;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>تحليلات أداء مايس الصناعية</h1>
+            <p>تحليل شامل لأداء الركيزة الصناعية المربحة - مايس</p>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Donut Chart for Sales by Product -->
+            <div class="chart-container">
+                <h2 class="chart-title">المبيعات حسب المنتج</h2>
+                <div class="donut-chart">
+                    <svg width="300" height="300" viewBox="0 0 300 300">
+                        <!-- Fasteners - 40% -->
+                        <circle cx="150" cy="150" r="80" fill="none" stroke="#667eea" stroke-width="40" 
+                                stroke-dasharray="201 502" stroke-dashoffset="0" transform="rotate(-90 150 150)"/>
+                        <!-- Grating - 25% -->
+                        <circle cx="150" cy="150" r="80" fill="none" stroke="#764ba2" stroke-width="40" 
+                                stroke-dasharray="126 502" stroke-dashoffset="-201" transform="rotate(-90 150 150)"/>
+                        <!-- Steel Bars - 20% -->
+                        <circle cx="150" cy="150" r="80" fill="none" stroke="#f093fb" stroke-width="40" 
+                                stroke-dasharray="100 502" stroke-dashoffset="-327" transform="rotate(-90 150 150)"/>
+                        <!-- Others - 15% -->
+                        <circle cx="150" cy="150" r="80" fill="none" stroke="#f5576c" stroke-width="40" 
+                                stroke-dasharray="75 502" stroke-dashoffset="-427" transform="rotate(-90 150 150)"/>
+                        
+                        <!-- Center text -->
+                        <text x="150" y="145" text-anchor="middle" font-size="16" font-weight="bold" fill="#2c3e50">إجمالي المبيعات</text>
+                        <text x="150" y="165" text-anchor="middle" font-size="20" font-weight="bold" fill="#667eea">2.4 مليار ريال</text>
+                    </svg>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #667eea;"></div>
+                        <span>المثبتات (40%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #764ba2;"></div>
+                        <span>الشبكات المعدنية (25%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f093fb;"></div>
+                        <span>القضبان الفولاذية (20%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f5576c;"></div>
+                        <span>منتجات أخرى (15%)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profit Margin Table -->
+            <div class="chart-container">
+                <h2 class="chart-title">هامش الربح المباشر حسب المنتج <span class="live-indicator"></span></h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>المنتج</th>
+                            <th>هامش الربح</th>
+                            <th>الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>المثبتات الصناعية</td>
+                            <td class="profit-positive">+23.5%</td>
+                            <td><span class="status-indicator status-up"></span>مرتفع</td>
+                        </tr>
+                        <tr>
+                            <td>الشبكات المعدنية</td>
+                            <td class="profit-positive">+18.2%</td>
+                            <td><span class="status-indicator status-stable"></span>مستقر</td>
+                        </tr>
+                        <tr>
+                            <td>القضبان الفولاذية</td>
+                            <td class="profit-positive">+15.7%</td>
+                            <td><span class="status-indicator status-up"></span>مرتفع</td>
+                        </tr>
+                        <tr>
+                            <td>الأنابيب المعدنية</td>
+                            <td class="profit-positive">+12.4%</td>
+                            <td><span class="status-indicator status-stable"></span>مستقر</td>
+                        </tr>
+                        <tr>
+                            <td>المكونات الخاصة</td>
+                            <td class="profit-negative">-2.1%</td>
+                            <td><span class="status-indicator status-down"></span>منخفض</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Major Projects Section -->
+        <div class="projects-section">
+            <div class="project-card">
+                <h3 class="project-title">🏗️ مشروع نيوم</h3>
+                <div class="project-metric">
+                    <span>إجمالي المبيعات:</span>
+                    <strong>450 مليون ريال</strong>
+                </div>
+                <div class="project-metric">
+                    <span>نسبة الإنجاز:</span>
+                    <strong>75%</strong>
+                </div>
+                <div class="project-metric">
+                    <span>المنتجات الرئيسية:</span>
+                    <strong>مثبتات، شبكات معدنية</strong>
+                </div>
+                <div class="project-metric">
+                    <span>الموقع الإلكتروني:</span>
+                    <strong>neom.com</strong>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <h3 class="project-title">🌊 مشروع البحر الأحمر</h3>
+                <div class="project-metric">
+                    <span>إجمالي المبيعات:</span>
+                    <strong>320 مليون ريال</strong>
+                </div>
+                <div class="project-metric">
+                    <span>نسبة الإنجاز:</span>
+                    <strong>60%</strong>
+                </div>
+                <div class="project-metric">
+                    <span>المنتجات الرئيسية:</span>
+                    <strong>قضبان فولاذية، أنابيب</strong>
+                </div>
+                <div class="project-metric">
+                    <span>المصدر:</span>
+                    <strong>scavo.sa</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Competitor Watch Feed -->
+        <div class="table-container">
+            <h2 class="chart-title">🔍 مراقب المنافسين - زامل الصناعية وآخرون</h2>
+            <div class="competitor-feed">
+                <div class="feed-item">
+                    <div class="feed-title">زامل الصناعية تعلن عن استثمار جديد بقيمة 200 مليون ريال</div>
+                    <div class="feed-meta">منذ 2 ساعة • المصدر: تداول السعودية</div>
+                </div>
+                <div class="feed-item">
+                    <div class="feed-title">انخفاض أسعار الفولاذ المستورد بنسبة 5% هذا الشهر</div>
+                    <div class="feed-meta">منذ 5 ساعات • المصدر: وزارة التجارة</div>
+                </div>
+                <div class="feed-item">
+                    <div class="feed-title">الشركة السعودية للحديد والصلب تحقق أرباحاً بقيمة 85 مليون ريال</div>
+                    <div class="feed-meta">منذ يوم واحد • المصدر: السوق المالية السعودية</div>
+                </div>
+                <div class="feed-item">
+                    <div class="feed-title">ارتفاع الطلب على المنتجات الصناعية في السوق السعودي بنسبة 12%</div>
+                    <div class="feed-meta">منذ يومين • المصدر: الهيئة العامة للإحصاء</div>
+                </div>
+                <div class="feed-item">
+                    <div class="feed-title">زامل الصناعية توقع عقداً جديداً مع مشروع القدية</div>
+                    <div class="feed-meta">منذ 3 أيام • المصدر: صحيفة الاقتصادية</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // تحديث البيانات المباشرة كل 30 ثانية
+        function updateLiveData() {
+            const profitCells = document.querySelectorAll('.profit-positive, .profit-negative');
+            profitCells.forEach(cell => {
+                const currentValue = parseFloat(cell.textContent.replace(/[+%-]/g, ''));
+                const variation = (Math.random() - 0.5) * 0.5; // تغيير عشوائي صغير
+                const newValue = currentValue + variation;
+                const sign = newValue >= 0 ? '+' : '';
+                cell.textContent = `${sign}${newValue.toFixed(1)}%`;
+                
+                if (newValue >= 0) {
+                    cell.className = 'profit-positive';
+                } else {
+                    cell.className = 'profit-negative';
+                }
+            });
+        }
+
+        // تحديث البيانات كل 30 ثانية
+        setInterval(updateLiveData, 30000);
+
+        // إضافة تأثيرات تفاعلية للجدول
+        document.querySelectorAll('.data-table tr').forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.02)';
+                this.style.transition = 'all 0.3s ease';
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // تحديث مؤشر البيانات المباشرة
+        function updateLiveIndicator() {
+            const indicator = document.querySelector('.live-indicator');
+            if (indicator) {
+                indicator.style.animation = 'none';
+                setTimeout(() => {
+                    indicator.style.animation = 'pulse 2s infinite';
+                }, 10);
+            }
+        }
+
+        setInterval(updateLiveIndicator, 30000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة الشريك</title>
+    <style>
+        body {
+            font-family: 'Cairo', Arial, sans-serif;
+            background: #f7f9fa;
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .welcome-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .welcome-card h1 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .section-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            color: #2c3e50;
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .order-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .order-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .status {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .announcement {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .announcement:last-child {
+            border-bottom: none;
+        }
+
+        .announcement h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+
+        .announcement p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="welcome-card">
+            <h1>مرحباً بك، شريكنا العزيز</h1>
+        </div>
+
+        <div class="section-card">
+            <h2 class="section-title">الطلبات الأخيرة</h2>
+            <ul class="order-list">
+                <li class="order-item">
+                    <span>طلب رقم #1234</span>
+                    <span class="status status-completed">مكتمل</span>
+                </li>
+                <li class="order-item">
+                    <span>طلب رقم #1235</span>
+                    <span class="status status-pending">قيد المعالجة</span>
+                </li>
+                <li class="order-item">
+                    <span>طلب رقم #1236</span>
+                    <span class="status status-completed">مكتمل</span>
+                </li>
+                <li class="order-item">
+                    <span>طلب رقم #1237</span>
+                    <span class="status status-pending">قيد المعالجة</span>
+                </li>
+                <li class="order-item">
+                    <span>طلب رقم #1238</span>
+                    <span class="status status-completed">مكتمل</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <h2 class="section-title">الإعلانات والمنتجات الجديدة</h2>
+            <div class="announcement">
+                <h3>منتج جديد: نظام إدارة المخزون المتقدم</h3>
+                <p>نقدم لكم أحدث إضافاتنا لتحسين كفاءة إدارة المخزون لديكم</p>
+            </div>
+            <div class="announcement">
+                <h3>تحديث الخدمات</h3>
+                <p>تم تحديث منصة الشركاء بميزات جديدة لتحسين تجربة المستخدم</p>
+            </div>
+            <div class="announcement">
+                <h3>عرض خاص للشركاء</h3>
+                <p>خصم 15% على جميع الخدمات الجديدة حتى نهاية الشهر</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

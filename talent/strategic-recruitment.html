@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التوظيف الاستراتيجي - ذكاء الأعمال والموارد البشرية</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 0;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: 700;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .ai-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .ai-section h2 {
+            color: #4a5568;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .ai-section h2::after {
+            content: '';
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: block;
+            margin: 15px auto;
+            border-radius: 2px;
+        }
+
+        .ai-description {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .recommendation-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recommendation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .growth-indicator {
+            background: linear-gradient(45deg, #48bb78, #38a169);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .growth-text {
+            font-size: 1.1rem;
+            color: #4a5568;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .recommendation-text {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .create-job-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .create-job-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .create-job-btn:hover::before {
+            left: 100%;
+        }
+
+        .create-job-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 50px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .ai-section {
+                padding: 25px;
+            }
+            
+            .ai-section h2 {
+                font-size: 2rem;
+            }
+            
+            .recommendations-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .recommendation-card {
+                padding: 20px;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 التوظيف الاستراتيجي</h1>
+            <p>ربط ذكاء الأعمال بالموارد البشرية لاتخاذ قرارات التوظيف المبنية على البيانات</p>
+        </div>
+
+        <div class="ai-section">
+            <h2>🤖 توصيات التوظيف المدعومة بالذكاء الاصطناعي</h2>
+            <p class="ai-description">
+                يقوم نظامنا المتطور بتحليل بيانات نمو الأعمال وأداء المبيعات لتقديم توصيات دقيقة للتوظيف، مما يضمن توفير الكوادر المناسبة في الوقت المناسب لدعم نمو شركتك
+            </p>
+
+            <div class="recommendations-grid">
+                <div class="recommendation-card">
+                    <div class="growth-indicator">📈 نمو 20%</div>
+                    <div class="growth-text">
+                        تم رصد نمو بنسبة 20% في مبيعات المطهرات خلال الربع الأخير مع توقعات بزيادة الطلب خلال الأشهر القادمة
+                    </div>
+                    <div class="recommendation-text">
+                        <strong>التوصية:</strong> توظيف 2 من مندوبي المبيعات المتخصصين في المواد الكيميائية الصناعية
+                    </div>
+                    <button class="create-job-btn" onclick="createJobPosting('مندوب مبيعات - المواد الكيميائية')">
+                        إنشاء إعلان وظيفي
+                    </button>
+                </div>
+
+                <div class="recommendation-card">
+                    <div class="growth-indicator">📊 نمو 35%</div>
+                    <div class="growth-text">
+                        ارتفاع كبير في طلبات الخدمات الرقمية بنسبة 35% مع زيادة في التعاملات الإلكترونية
+                    </div>
+                    <div class="recommendation-text">
+                        <strong>التوصية:</strong> توظيف مطور واجهات أمامية ومحلل بيانات رقمية
+                    </div>
+                    <button class="create-job-btn" onclick="createJobPosting('مطور واجهات أمامية')">
+                        إنشاء إعلان وظيفي
+                    </button>
+                </div>
+
+                <div class="recommendation-card">
+                    <div class="growth-indicator">🔥 نمو 45%</div>
+                    <div class="growth-text">
+                        نمو استثنائي في قطاع خدمة العملاء بنسبة 45% مع زيادة في الاستفسارات والشكاوى
+                    </div>
+                    <div class="recommendation-text">
+                        <strong>التوصية:</strong> توظيف 3 من موظفي خدمة العملاء ومشرف فريق
+                    </div>
+                    <button class="create-job-btn" onclick="createJobPosting('موظف خدمة عملاء')">
+                        إنشاء إعلان وظيفي
+                    </button>
+                </div>
+
+                <div class="recommendation-card">
+                    <div class="growth-indicator">⚡ نمو 28%</div>
+                    <div class="growth-text">
+                        تزايد الطلب على الخدمات اللوجستية بنسبة 28% مع توسع شبكة التوزيع
+                    </div>
+                    <div class="recommendation-text">
+                        <strong>التوصية:</strong> توظيف منسق لوجستي وسائق توصيل متخصص
+                    </div>
+                    <button class="create-job-btn pulse" onclick="createJobPosting('منسق لوجستي')">
+                        إنشاء إعلان وظيفي
+                    </button>
+                </div>
+
+                <div class="recommendation-card">
+                    <div class="growth-indicator">🎯 نمو 32%</div>
+                    <div class="growth-text">
+                        نمو ملحوظ في الحملات التسويقية الرقمية بنسبة 32% مع زيادة في معدل التحويل
+                    </div>
+                    <div class="recommendation-text">
+                        <strong>التوصية:</strong> توظيف أخصائي تسويق رقمي ومصمم جرافيك
+                    </div>
+                    <button class="create-job-btn" onclick="createJobPosting('أخصائي تسويق رقمي')">
+                        إنشاء إعلان وظيفي
+                    </button>
+                </div>
+
+                <div class="recommendation-card">
+                    <div class="growth-indicator">💼 نمو 25%</div>
+                    <div class="growth-text">
+                        ازدياد في العمليات المالية والمحاسبية بنسبة 25% مع تعقد في الهيكل المالي
+                    </div>
+                    <div class="recommendation-text">
+                        <strong>التوصية:</strong> توظيف محاسب مالي ومحلل مالي متخصص
+                    </div>
+                    <button class="create-job-btn" onclick="createJobPosting('محاسب مالي')">
+                        إنشاء إعلان وظيفي
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <div class="stat-card">
+                <div class="icon">📊</div>
+                <div class="stat-number">85%</div>
+                <div class="stat-label">دقة التوصيات</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">⚡</div>
+                <div class="stat-number">40%</div>
+                <div class="stat-label">توفير في الوقت</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">💰</div>
+                <div class="stat-number">60%</div>
+                <div class="stat-label">تقليل التكاليف</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🎯</div>
+                <div class="stat-number">95%</div>
+                <div class="stat-label">رضا العملاء</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function createJobPosting(jobTitle) {
+            // محاكاة إنشاء إعلان وظيفي
+            const confirmation = confirm(`هل تريد إنشاء إعلان وظيفي لوظيفة: ${jobTitle}؟`);
+            
+            if (confirmation) {
+                // هنا يمكن إضافة كود لإرسال البيانات إلى الخادم
+                alert(`تم إنشاء إعلان وظيفي جديد لوظيفة: ${jobTitle}\n\nسيتم توجيهك إلى صفحة تفاصيل الإعلان...`);
+                
+                // محاكاة التوجيه إلى صفحة إنشاء الإعلان
+                console.log(`Creating job posting for: ${jobTitle}`);
+                
+                // يمكن إضافة animation للإشارة إلى نجاح العملية
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = 'تم الإنشاء ✓';
+                button.style.background = 'linear-gradient(45deg, #48bb78, #38a169)';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                }, 2000);
+            }
+        }
+
+        // إضافة تأثيرات تفاعلية
+        document.querySelectorAll('.recommendation-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // تأثير التحميل التدريجي للبطاقات
+        window.addEventListener('load', function() {
+            const cards = document.querySelectorAll('.recommendation-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(30px)';
+                    card.style.transition = 'all 0.6s ease';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 150);
+            });
+        });
+    </script>
+</body>
+</html>

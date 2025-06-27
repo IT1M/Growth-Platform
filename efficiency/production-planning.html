@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تخطيط الإنتاج</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #2d3748;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .header p {
+            color: #718096;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .date-range label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .date-range input {
+            padding: 0.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .date-range input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .filter-btn:hover::before {
+            left: 100%;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .planning-board {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .timeline-header {
+            display: grid;
+            grid-template-columns: 250px repeat(30, 1fr);
+            background: linear-gradient(135deg, #4a5568, #2d3748);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .timeline-header .line-label {
+            padding: 1rem;
+            background: #2d3748;
+            border-left: 1px solid #4a5568;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .timeline-header .date-cell {
+            padding: 0.8rem 0.5rem;
+            text-align: center;
+            border-left: 1px solid #4a5568;
+            font-size: 0.85rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: background 0.3s ease;
+        }
+
+        .timeline-header .date-cell:hover {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+        }
+
+        .production-line {
+            display: grid;
+            grid-template-columns: 250px repeat(30, 1fr);
+            border-bottom: 1px solid #e2e8f0;
+            min-height: 80px;
+            transition: background-color 0.3s ease;
+        }
+
+        .production-line:hover {
+            background-color: rgba(102, 126, 234, 0.05);
+        }
+
+        .line-info {
+            padding: 1rem;
+            background: #f7fafc;
+            border-left: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .line-info::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .line-name {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.3rem;
+            font-size: 1rem;
+        }
+
+        .line-capacity {
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        .timeline-cell {
+            border-left: 1px solid #e2e8f0;
+            position: relative;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            padding: 0.3rem;
+        }
+
+        .production-block {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .production-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .production-block:hover::before {
+            left: 100%;
+        }
+
+        .production-block:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
+        }
+
+        .production-block.urgent {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+            box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        .production-block.maintenance {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+            box-shadow: 0 4px 12px rgba(237, 137, 54, 0.3);
+        }
+
+        .production-block.planned {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+            box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .alert-indicator {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            background: #f56565;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: white;
+            font-weight: bold;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 2rem;
+            background: rgba(247, 250, 252, 0.8);
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .legend-color.active { background: linear-gradient(135deg, #48bb78, #38a169); }
+        .legend-color.urgent { background: linear-gradient(135deg, #f56565, #e53e3e); }
+        .legend-color.maintenance { background: linear-gradient(135deg, #ed8936, #dd6b20); }
+        .legend-color.planned { background: linear-gradient(135deg, #4299e1, #3182ce); }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .timeline-header,
+            .production-line {
+                grid-template-columns: 200px repeat(15, 1fr);
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .date-range {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏭 لوحة تخطيط الإنتاج</h1>
+            <p>ربط توقعات المبيعات بجداول إنتاج المصنع</p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value">87%</div>
+                <div class="stat-label">كفاءة الإنتاج</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">12</div>
+                <div class="stat-label">طلبات نشطة</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">3</div>
+                <div class="stat-label">تنبيهات المواد</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">2.4</div>
+                <div class="stat-label">أيام متوسط التأخير</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="date-range">
+                <label>من تاريخ:</label>
+                <input type="date" value="2025-06-27">
+                <label>إلى تاريخ:</label>
+                <input type="date" value="2025-07-27">
+            </div>
+            <div class="filters">
+                <button class="filter-btn">عرض الكل</button>
+                <button class="filter-btn">الطلبات العاجلة</button>
+                <button class="filter-btn">الصيانة المجدولة</button>
+            </div>
+        </div>
+
+        <div class="planning-board">
+            <div class="timeline-header">
+                <div class="line-label">خط الإنتاج</div>
+                <div class="date-cell">27<br>يون</div>
+                <div class="date-cell">28<br>يون</div>
+                <div class="date-cell">29<br>يون</div>
+                <div class="date-cell">30<br>يون</div>
+                <div class="date-cell">1<br>يول</div>
+                <div class="date-cell">2<br>يول</div>
+                <div class="date-cell">3<br>يول</div>
+                <div class="date-cell">4<br>يول</div>
+                <div class="date-cell">5<br>يول</div>
+                <div class="date-cell">6<br>يول</div>
+                <div class="date-cell">7<br>يول</div>
+                <div class="date-cell">8<br>يول</div>
+                <div class="date-cell">9<br>يول</div>
+                <div class="date-cell">10<br>يول</div>
+                <div class="date-cell">11<br>يول</div>
+                <div class="date-cell">12<br>يول</div>
+                <div class="date-cell">13<br>يول</div>
+                <div class="date-cell">14<br>يول</div>
+                <div class="date-cell">15<br>يول</div>
+                <div class="date-cell">16<br>يول</div>
+                <div class="date-cell">17<br>يول</div>
+                <div class="date-cell">18<br>يول</div>
+                <div class="date-cell">19<br>يول</div>
+                <div class="date-cell">20<br>يول</div>
+                <div class="date-cell">21<br>يول</div>
+                <div class="date-cell">22<br>يول</div>
+                <div class="date-cell">23<br>يول</div>
+                <div class="date-cell">24<br>يول</div>
+                <div class="date-cell">25<br>يول</div>
+                <div class="date-cell">26<br>يول</div>
+            </div>
+
+            <div class="production-line">
+                <div class="line-info">
+                    <div class="line-name">خط مراسي MAIS</div>
+                    <div class="line-capacity">الطاقة: 500 قطعة/يوم</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block">
+                        طلب #1245
+                        <div class="alert-indicator">!</div>
+                    </div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block">طلب #1245</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell">
+                    <div class="production-block urgent">طلب عاجل #1250</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block urgent">طلب عاجل #1250</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell">
+                    <div class="production-block planned">مخطط #1255</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block planned">مخطط #1255</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block planned">مخطط #1255</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell">
+                    <div class="production-block">طلب #1260</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block">طلب #1260</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+            </div>
+
+            <div class="production-line">
+                <div class="line-info">
+                    <div class="line-name">خط حلول APF IV</div>
+                    <div class="line-capacity">الطاقة: 300 وحدة/يوم</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell">
+                    <div class="production-block">APF-001</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block">APF-001</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block">APF-001</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell">
+                    <div class="production-block maintenance">صيانة مجدولة</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block maintenance">صيانة مجدولة</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell">
+                    <div class="production-block urgent">
+                        APF-002 عاجل
+                        <div class="alert-indicator">⚠</div>
+                    </div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block urgent">APF-002 عاجل</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block urgent">APF-002 عاجل</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell">
+                    <div class="production-block planned">APF-003</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block planned">APF-003</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+            </div>
+
+            <div class="production-line">
+                <div class="line-info">
+                    <div class="line-name">خط التجميع العام</div>
+                    <div class="line-capacity">الطاقة: 200 وحدة/يوم</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block planned">مشروع A</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block planned">مشروع A</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block planned">مشروع A</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block planned">مشروع A</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block planned">مشروع A</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell">
+                    <div class="production-block">مشروع B</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block">مشروع B</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block">مشروع B</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell">
+                    <div class="production-block urgent">
+                        مشروع عاجل C
+                        <div class="alert-indicator">🚨</div>
+                    </div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block urgent">مشروع عاجل C</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block urgent">مشروع عاجل C</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+            </div>
+
+            <div class="production-line">
+                <div class="line-info">
+                    <div class="line-name">خط الفحص والجودة</div>
+                    <div class="line-capacity">الطاقة: 400 قطعة/يوم</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell">
+                    <div class="production-block">فحص دفعة #100</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block">فحص دفعة #100</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell">
+                    <div class="production-block maintenance">معايرة الأجهزة</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell">
+                    <div class="production-block">فحص دفعة #101</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block">فحص دفعة #101</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block">فحص دفعة #101</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell">
+                    <div class="production-block urgent">فحص عاجل #102</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block urgent">فحص عاجل #102</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell">
+                    <div class="production-block planned">فحص مخطط #103</div>
+                </div>
+                <div class="timeline-cell">
+                    <div class="production-block planned">فحص مخطط #103</div>
+                </div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+                <div class="timeline-cell"></div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color active"></div>
+                    <span>إنتاج نشط</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color urgent"></div>
+                    <span>طلبات عاجلة</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color maintenance"></div>
+                    <span>صيانة مجدولة</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color planned"></div>
+                    <span>إنتاج مخطط</span>
+                </div>
+                <div class="legend-item">
+                    <span style="color: #f56565; font-size: 1.2rem;">⚠</span>
+                    <span>تنبيه نقص المواد</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // إضافة تفاعلية للوحة التخطيط
+        document.querySelectorAll('.production-block').forEach(block => {
+            block.addEventListener('click', function() {
+                const details = `
+                تفاصيل العملية: ${this.textContent.trim()}
+                خط الإنتاج: ${this.closest('.production-line').querySelector('.line-name').textContent}
+                الحالة: ${this.classList.contains('urgent') ? 'عاجل' : 
+                         this.classList.contains('maintenance') ? 'صيانة' : 
+                         this.classList.contains('planned') ? 'مخطط' : 'نشط'}
+                `;
+                alert(details);
+            });
+        });
+
+        // تحديث التواريخ في رأس الجدول الزمني
+        const today = new Date();
+        const dateHeaders = document.querySelectorAll('.date-cell');
+        
+        dateHeaders.forEach((header, index) => {
+            const date = new Date(today);
+            date.setDate(today.getDate() + index);
+            
+            const day = date.getDate();
+            const month = date.toLocaleDateString('ar-SA', { month: 'short' });
+            
+            header.innerHTML = `${day}<br>${month}`;
+        });
+
+        // تحديث حقول التاريخ
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+        const todayStr = today.toISOString().split('T')[0];
+        const futureDate = new Date(today);
+        futureDate.setDate(today.getDate() + 30);
+        const futureDateStr = futureDate.toISOString().split('T')[0];
+        
+        dateInputs[0].value = todayStr;
+        dateInputs[1].value = futureDateStr;
+
+        // إضافة وظائف التصفية
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // إزالة التحديد من جميع الأزرار
+                filterButtons.forEach(btn => btn.style.opacity = '0.7');
+                // تحديد الزر المضغوط
+                this.style.opacity = '1';
+                
+                const filterType = this.textContent.trim();
+                const allBlocks = document.querySelectorAll('.production-block');
+                
+                allBlocks.forEach(block => {
+                    const parent = block.closest('.timeline-cell');
+                    if (filterType === 'عرض الكل') {
+                        parent.style.display = 'flex';
+                    } else if (filterType === 'الطلبات العاجلة') {
+                        parent.style.display = block.classList.contains('urgent') ? 'flex' : 'none';
+                    } else if (filterType === 'الصيانة المجدولة') {
+                        parent.style.display = block.classList.contains('maintenance') ? 'flex' : 'none';
+                    }
+                });
+            });
+        });
+
+        // تحديث الإحصائيات بشكل دوري
+        function updateStats() {
+            const stats = document.querySelectorAll('.stat-value');
+            const efficiency = Math.floor(Math.random() * 10) + 85;
+            const activeOrders = Math.floor(Math.random() * 5) + 10;
+            const alerts = Math.floor(Math.random() * 3) + 2;
+            const avgDelay = (Math.random() * 2 + 1).toFixed(1);
+            
+            stats[0].textContent = efficiency + '%';
+            stats[1].textContent = activeOrders;
+            stats[2].textContent = alerts;
+            stats[3].textContent = avgDelay;
+        }
+
+        // تحديث الإحصائيات كل 10 ثوان
+        setInterval(updateStats, 10000);
+
+        // إضافة تأثير السحب والإفلات (محاكاة)
+        let draggedBlock = null;
+        
+        document.querySelectorAll('.production-block').forEach(block => {
+            block.addEventListener('mousedown', function(e) {
+                draggedBlock = this;
+                this.style.opacity = '0.5';
+                this.style.transform = 'scale(0.9)';
+            });
+            
+            block.addEventListener('mouseup', function(e) {
+                if (draggedBlock) {
+                    draggedBlock.style.opacity = '1';
+                    draggedBlock.style.transform = 'scale(1)';
+                    draggedBlock = null;
+                }
+            });
+        });
+
+        // إضافة تأثيرات الهوفر المتقدمة
+        document.querySelectorAll('.production-line').forEach(line => {
+            line.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = 'rgba(102, 126, 234, 0.08)';
+                this.style.borderLeft = '4px solid #667eea';
+                this.style.transition = 'all 0.3s ease';
+            });
+            
+            line.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = '';
+                this.style.borderLeft = '';
+            });
+        });
+
+        // محاكاة التحديثات المباشرة
+        function simulateRealTimeUpdates() {
+            const alerts = document.querySelectorAll('.alert-indicator');
+            alerts.forEach(alert => {
+                const shouldShow = Math.random() > 0.7;
+                alert.style.display = shouldShow ? 'flex' : 'none';
+            });
+        }
+
+        // تشغيل التحديثات المباشرة كل 5 ثوان
+        setInterval(simulateRealTimeUpdates, 5000);
+
+        // إضافة تأثير الضوء المتحرك على البلوكس
+        function addShimmerEffect() {
+            const blocks = document.querySelectorAll('.production-block');
+            blocks.forEach(block => {
+                if (Math.random() > 0.8) {
+                    block.style.animation = 'shimmer 2s ease-in-out';
+                    setTimeout(() => {
+                        block.style.animation = '';
+                    }, 2000);
+                }
+            });
+        }
+
+        // إضافة تأثير الضوء كل 15 ثانية
+        setInterval(addShimmerEffect, 15000);
+
+        // إضافة تأثير CSS للضوء المتحرك
+        const shimmerStyle = document.createElement('style');
+        shimmerStyle.textContent = `
+            @keyframes shimmer {
+                0% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
+                50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6); }
+                100% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
+            }
+        `;
+        document.head.appendChild(shimmerStyle);
+
+        // تخصيص الألوان حسب الأولوية
+        function updateBlockColors() {
+            const blocks = document.querySelectorAll('.production-block');
+            blocks.forEach(block => {
+                const text = block.textContent.toLowerCase();
+                if (text.includes('عاجل')) {
+                    block.classList.add('urgent');
+                } else if (text.includes('صيانة')) {
+                    block.classList.add('maintenance');
+                } else if (text.includes('مخطط')) {
+                    block.classList.add('planned');
+                }
+            });
+        }
+
+        // تطبيق تخصيص الألوان عند تحميل الصفحة
+        updateBlockColors();
+
+        // إضافة تفاعل مع تغيير التواريخ
+        document.querySelectorAll('input[type="date"]').forEach(input => {
+            input.addEventListener('change', function() {
+                const startDate = new Date(dateInputs[0].value);
+                const endDate = new Date(dateInputs[1].value);
+                
+                if (startDate > endDate) {
+                    alert('تاريخ البداية يجب أن يكون قبل تاريخ النهاية');
+                    return;
+                }
+                
+                // تحديث رؤوس التواريخ
+                dateHeaders.forEach((header, index) => {
+                    const date = new Date(startDate);
+                    date.setDate(startDate.getDate() + index);
+                    
+                    const day = date.getDate();
+                    const month = date.toLocaleDateString('ar-SA', { month: 'short' });
+                    
+                    header.innerHTML = `${day}<br>${month}`;
+                });
+            });
+        });
+
+        // إضافة صوت للتنبيهات (اختياري)
+        function playNotificationSound() {
+            // يمكن إضافة صوت تنبيه هنا
+            console.log('🔔 تنبيه جديد في خط الإنتاج');
+        }
+
+        // محاكاة تنبيهات جديدة
+        setInterval(() => {
+            if (Math.random() > 0.9) {
+                playNotificationSound();
+                // إضافة تأثير بصري للتنبيه
+                const randomAlert = document.querySelector('.alert-indicator');
+                if (randomAlert) {
+                    randomAlert.style.animation = 'bounce 1s infinite';
+                }
+            }
+        }, 30000);
+
+        console.log('✅ تم تحميل لوحة تخطيط الإنتاج بنجاح');
+    </script>
+</body>
+</html>

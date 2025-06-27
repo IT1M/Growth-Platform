@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محرك البحث المعرفي - قاعدة المعرفة الموحدة</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 60px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.9);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .search-section {
+            margin-bottom: 50px;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 700px;
+            margin: 0 auto;
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 25px 70px 25px 25px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            outline: none;
+            transition: all 0.3s ease;
+            text-align: right;
+        }
+
+        .search-input:focus {
+            background: white;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            transform: translateY(-2px);
+        }
+
+        .search-input::placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        .search-button {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .search-button:hover {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .search-icon {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .examples {
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .examples-title {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .example-prompts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .example-prompt {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.95rem;
+        }
+
+        .example-prompt:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .results-section {
+            margin-top: 40px;
+            animation: fadeIn 0.5s ease-out;
+            display: none;
+        }
+
+        .results-container {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            text-align: right;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .result-item {
+            padding: 20px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item:hover {
+            background: rgba(102,126,234,0.05);
+            border-radius: 10px;
+        }
+
+        .result-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .result-content {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .result-source {
+            font-size: 0.9rem;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            color: white;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .search-input {
+                padding: 20px 60px 20px 20px;
+                font-size: 1rem;
+            }
+            
+            .search-button {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .example-prompts {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .example-prompt {
+                max-width: 90%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🔍 المعرفة</div>
+            <div class="subtitle">محرك البحث الموحد لقاعدة معرفة الشركة</div>
+        </div>
+
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="اسأل أي سؤال عن المعرفة المتاحة في الشركة...">
+                <button class="search-button" id="searchButton">
+                    <svg class="search-icon" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="examples">
+                <div class="examples-title">أمثلة على الأسئلة التي يمكنك طرحها:</div>
+                <div class="example-prompts">
+                    <div class="example-prompt" onclick="setSearchQuery(this.textContent)">
+                        ما هي مواصفات شبكات التصريف المقاومة للصدأ؟
+                    </div>
+                    <div class="example-prompt" onclick="setSearchQuery(this.textContent)">
+                        ما هي مدة صلاحية محلول الميترونيدازول؟
+                    </div>
+                    <div class="example-prompt" onclick="setSearchQuery(this.textContent)">
+                        كيفية إجراء فحص جودة المنتجات الطبية؟
+                    </div>
+                    <div class="example-prompt" onclick="setSearchQuery(this.textContent)">
+                        ما هي إجراءات السلامة في المختبرات؟
+                    </div>
+                    <div class="example-prompt" onclick="setSearchQuery(this.textContent)">
+                        طرق تخزين المواد الكيميائية الحساسة
+                    </div>
+                    <div class="example-prompt" onclick="setSearchQuery(this.textContent)">
+                        معايير مراقبة الجودة للمعدات الطبية
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div>جاري البحث في قاعدة المعرفة...</div>
+        </div>
+
+        <div class="results-section" id="results">
+            <div class="results-container">
+                <div id="resultsContent">
+                    <!-- النتائج ستظهر هنا -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const resultsContent = document.getElementById('resultsContent');
+
+        // عينة من البيانات للمحاكاة
+        const sampleResults = [
+            {
+                title: "مواصفات شبكات التصريف المقاومة للصدأ",
+                content: "شبكات التصريف المقاومة للصدأ يجب أن تكون مصنوعة من الستانلس ستيل درجة 316، مع سماكة لا تقل عن 2 مم، وقدرة تحمل ضغط تصل إلى 150 بار. يجب أن تحتوي على طلاء مقاوم للتآكل ومعتمدة من الهيئات الدولية للجودة.",
+                source: "دليل المواصفات الفنية - قسم الهندسة"
+            },
+            {
+                title: "مدة صلاحية محلول الميترونيدازول",
+                content: "محلول الميترونيدازول للحقن الوريدي له مدة صلاحية تتراوح بين 24-36 شهر من تاريخ التصنيع عند حفظه في درجة حرارة الغرفة (15-25°م) في مكان جاف ومظلم. بعد فتح العبوة، يجب استخدامه خلال 24 ساعة.",
+                source: "دليل الأدوية والمستحضرات الطبية - القسم الصيدلاني"
+            },
+            {
+                title: "إجراءات فحص جودة المنتجات الطبية",
+                content: "يتم فحص جودة المنتجات الطبية وفقاً لمعايير ISO 13485 ويشمل: الفحص البصري، اختبارات الأداء الوظيفي، فحص التعقيم، اختبار التوافق الحيوي، والتحقق من المطابقة للمواصفات المعتمدة.",
+                source: "إجراءات ضمان الجودة - قسم مراقبة الجودة"
+            }
+        ];
+
+        function performSearch(query) {
+            if (!query.trim()) return;
+
+            // إخفاء النتائج السابقة وإظهار التحميل
+            results.style.display = 'none';
+            loading.style.display = 'block';
+
+            // محاكاة تأخير البحث
+            setTimeout(() => {
+                loading.style.display = 'none';
+                displayResults(query);
+                results.style.display = 'block';
+            }, 2000);
+        }
+
+        function displayResults(query) {
+            // فلترة النتائج بناء على الاستعلام
+            const filteredResults = sampleResults.filter(result => 
+                result.title.includes(getKeywords(query)) || 
+                result.content.includes(getKeywords(query)) ||
+                containsRelevantKeywords(result, query)
+            );
+
+            if (filteredResults.length === 0) {
+                resultsContent.innerHTML = `
+                    <div class="result-item">
+                        <div class="result-title">لم يتم العثور على نتائج</div>
+                        <div class="result-content">عذراً، لم نتمكن من العثور على معلومات متعلقة بـ "${query}". يرجى المحاولة بكلمات أخرى أو التواصل مع قسم إدارة المعرفة.</div>
+                    </div>
+                `;
+            } else {
+                resultsContent.innerHTML = filteredResults.map(result => `
+                    <div class="result-item">
+                        <div class="result-title">${result.title}</div>
+                        <div class="result-content">${highlightKeywords(result.content, query)}</div>
+                        <div class="result-source">المصدر: ${result.source}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function getKeywords(query) {
+            // استخراج الكلمات المفتاحية من الاستعلام
+            const keywords = ['شبكات', 'التصريف', 'الصدأ', 'ميترونيدازول', 'صلاحية', 'جودة', 'فحص', 'طبية'];
+            return keywords.find(keyword => query.includes(keyword)) || query.split(' ')[0];
+        }
+
+        function containsRelevantKeywords(result, query) {
+            const queryLower = query.toLowerCase();
+            const titleLower = result.title.toLowerCase();
+            const contentLower = result.content.toLowerCase();
+            
+            if (queryLower.includes('شبكات') || queryLower.includes('تصريف') || queryLower.includes('صدأ')) {
+                return titleLower.includes('شبكات') || titleLower.includes('تصريف');
+            }
+            if (queryLower.includes('ميترونيدازول') || queryLower.includes('صلاحية')) {
+                return titleLower.includes('ميترونيدازول') || contentLower.includes('صلاحية');
+            }
+            if (queryLower.includes('فحص') || queryLower.includes('جودة') || queryLower.includes('طبية')) {
+                return titleLower.includes('فحص') || titleLower.includes('جودة');
+            }
+            
+            return false;
+        }
+
+        function highlightKeywords(text, query) {
+            const keywords = query.split(' ').filter(word => word.length > 2);
+            let highlightedText = text;
+            
+            keywords.forEach(keyword => {
+                const regex = new RegExp(`(${keyword})`, 'gi');
+                highlightedText = highlightedText.replace(regex, '<mark style="background: #fff3cd; padding: 2px 4px; border-radius: 3px;">$1</mark>');
+            });
+            
+            return highlightedText;
+        }
+
+        function setSearchQuery(query) {
+            searchInput.value = query;
+            performSearch(query);
+        }
+
+        // إضافة أحداث البحث
+        searchButton.addEventListener('click', () => {
+            performSearch(searchInput.value);
+        });
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performSearch(searchInput.value);
+            }
+        });
+
+        // تركيز تلقائي على صندوق البحث
+        searchInput.focus();
+    </script>
+</body>
+</html>
